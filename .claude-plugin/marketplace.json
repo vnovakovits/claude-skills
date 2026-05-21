@@ -1,0 +1,20 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "claude-skills",
+  "description": "Engineering practice and methodology skills for Claude Code, distilled from canonical software-craftsmanship books (Clean Code, Refactoring, DDD, TDD, Lean, Kanban, and more).",
+  "owner": {
+    "name": "vnovakovits"
+  },
+  "plugins": [
+    {
+      "name": "engineering-practices",
+      "description": "Thirty-one engineering-practice skills covering design (Clean Code, SOLID, CUPID, DDD, Hexagonal Architecture), testing (TDD, BDD, Khorikov's unit-testing principles), refactoring (Fowler, Kerievsky, Tidy First, Feathers), delivery (CD, Kanban, Lean, Flow), product (Running Lean, Story Splitting, Ticket Writing), and language-specific helpers (LanguageExt for C#).",
+      "author": {
+        "name": "vnovakovits"
+      },
+      "category": "development",
+      "source": "./plugins/engineering-practices",
+      "homepage": "https://github.com/vnovakovits/claude-skills"
+    }
+  ]
+}

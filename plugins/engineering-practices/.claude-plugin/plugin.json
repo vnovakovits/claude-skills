@@ -1,0 +1,7 @@
+{
+  "name": "engineering-practices",
+  "description": "Thirty-one engineering-practice skills covering design, testing, refactoring, delivery, product, and language-specific helpers — distilled from canonical software-craftsmanship books.",
+  "author": {
+    "name": "vnovakovits"
+  }
+}
