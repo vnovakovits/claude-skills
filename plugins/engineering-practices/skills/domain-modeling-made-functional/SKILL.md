@@ -1,6 +1,6 @@
 ---
 name: domain-modeling-made-functional
-description: Apply Scott Wlaschin's "Domain Modeling Made Functional" (Pragmatic Bookshelf, 2018) — the functional rendering of domain-driven design. Covers making illegal states unrepresentable through algebraic data types, designing workflows as type signatures (Command → AsyncResult<Events, DomainError>), modeling errors as values via the three-track railroad (domain errors / infrastructure errors / panics), single-case wrappers for primitive obsession, choice-of-states for aggregates, DTO-to-domain translation at bounded-context edges, persistence ignorance via functional-core/imperative-shell, dependency rejection (passing dependencies as functions instead of interfaces), and workflow composition by chaining typed steps. Use when designing a new domain workflow / aggregate / API endpoint in a typed language (F#, Scala, Kotlin, TypeScript, C# with records + LanguageExt); when reviewing a domain model and asking whether its invariants are encoded in the type system vs in runtime guards; when refactoring exception-based domain code to errors-as-values; when explaining "make illegal states unrepresentable" or "workflows as type signatures"; when looking at a record bristling with `Option<>` and sibling-exclusive bools and wondering if it should be a sum type; when a team uses OO DDD (Evans/Vernon) but wants to lean into the type system. Strong complement to `domain-driven-design`, `hexagonal-clean-architecture`, and `clean-code` — those handle the organizational and strategic side, this skill handles the type-encoding side. Skip for dynamically-typed codebases (Python, Ruby, vanilla JS) where the techniques don't have a compiler to back them; for strategic-DDD questions about bounded contexts and ubiquitous language (use `domain-driven-design`); for pure OO pattern questions (use `solid-principles`, `responsibility-driven-design`).
+description: Apply Scott Wlaschin's "Domain Modeling Made Functional" (Pragmatic Bookshelf, 2018) — the functional rendering of domain-driven design. Covers making illegal states unrepresentable through algebraic data types, designing workflows as type signatures (Command → AsyncResult<Events, DomainError>), modeling errors as values via the three-track railroad (domain errors / infrastructure errors / panics), single-case wrappers for primitive obsession, choice-of-states for aggregates, DTO-to-domain translation at bounded-context edges, persistence ignorance via functional-core/imperative-shell, the impureim and Recawr (read-calculate-write) sandwich for structuring an application service as impure-pure-impure, dependency rejection and decoupling decisions from effects (the domain takes data and returns decisions/events rather than injecting dependencies), and workflow composition by chaining typed steps. Use when designing a new domain workflow / aggregate / API endpoint in a typed language (F#, Scala, Kotlin, TypeScript, C# with records + LanguageExt); when reviewing a domain model and asking whether its invariants are encoded in the type system vs in runtime guards; when refactoring exception-based domain code to errors-as-values; when explaining "make illegal states unrepresentable" or "workflows as type signatures"; when looking at a record bristling with `Option<>` and sibling-exclusive bools and wondering if it should be a sum type; when a team uses OO DDD (Evans/Vernon) but wants to lean into the type system; when structuring an application service as an impureim sandwich, or asking how to keep the domain pure when a decision needs an external call (re-quote, re-price) partway through. Strong complement to `domain-driven-design`, `hexagonal-clean-architecture`, and `clean-code` — those handle the organizational and strategic side, this skill handles the type-encoding side. Skip for dynamically-typed codebases (Python, Ruby, vanilla JS) where the techniques don't have a compiler to back them; for strategic-DDD questions about bounded contexts and ubiquitous language (use `domain-driven-design`); for pure OO pattern questions (use `solid-principles`, `responsibility-driven-design`).
 ---
 
 # Domain Modeling Made Functional
@@ -201,20 +201,35 @@ Wlaschin's rendering of hexagonal/ports-and-adapters:
 ┌─────────────── Imperative Shell ───────────────┐
 │  HTTP / DB / Bus / Files / Clock                │
 │  ┌────── Functional Core ──────┐                │
-│  │  Pure workflow functions:   │ ← dependencies │
-│  │  Command → Events           │   passed in as │
-│  │  No IO. No throwing.        │   functions    │
+│  │  Pure workflow functions:   │ ← data in,     │
+│  │  Command → Events           │   decisions /  │
+│  │  No IO. No throwing.        │   events out   │
 │  └─────────────────────────────┘                │
 └─────────────────────────────────────────────────┘
 ```
 
-**Dependency rejection** (Wlaschin's coinage, contra "injection"): instead of injecting an *interface* that the domain depends on, pass the *function the domain needs* as a parameter. The domain doesn't even know an interface exists.
+functional-architecture.org states it plainly: the core is "the part that only depends on the inputs to produce the desired output — the pure functions"; the shell "handles the interactions with the outside world" and "orchestrates all the impure effects." The domain logic — *what* the software does — lives in the core. (The split is Gary Bernhardt's originating "functional core, imperative shell.")
+
+How does the core get what it needs from the outside world? There's a spectrum, lightest to heaviest — Wlaschin's *Six approaches to dependency injection*, itself inspired by Seemann:
+
+| Approach | What the core does | When |
+|---|---|---|
+| **Dependency retention** | Inlines / hard-codes the I/O | Scripts, throwaway ETL — never for logic you want to test |
+| **Dependency rejection** | *No* dependency: reads happen before, writes after; core takes data, returns decisions | **Default — "used wherever possible."** |
+| **Dependency parameterization** | Takes the dependency as a *function* parameter | When the core must call out and rejection won't fit |
+| **OO-style DI** | Constructor-injects an interface | At the OO/framework edge — controllers, consumers |
+| **Reader monad** | Threads dependencies functionally | "Not a technique I would recommend unless you can see a clear benefit" |
+| **Dependency interpretation** | Returns an AST, interpreted impurely later | Only for a genuine free-monad/DSL need — see below |
+
+Two of these do almost all the work: **rejection** by default, **parameterization** when the core genuinely must call a function mid-computation.
+
+**Dependency parameterization** passes the *function the domain needs* as a parameter, so the domain never names an interface:
 
 ```csharp
 // OO style: domain knows about IPricingService.
 public class PlaceOrder(IPricingService pricing) { ... }
 
-// Functional style: domain takes the function it needs.
+// Parameterized: domain takes the function it needs.
 public static class PlaceOrder
 {
     public static Either<Error, PricedOrder> Run(
@@ -223,7 +238,79 @@ public static class PlaceOrder
 }
 ```
 
-The domain layer has no `IPricingService` interface. It has a function shape. The imperative shell wires a concrete implementation at the boundary. The domain stays maximally portable and trivially testable — pass a lambda in the test, you're done.
+The domain has no `IPricingService` interface — just a function shape — and is trivially testable: pass a lambda in the test. But `getPrice` is *still a dependency*; if it does I/O, `Run` is no longer pure. **Dependency rejection** (Seemann's term, contra "injection") goes one step further and removes the dependency: gather the prices *before* calling the core, and pass them in as data. That shape has a name.
+
+## The impureim sandwich: decisions in, effects out
+
+Dependency rejection has a concrete shape, named by Mark Seemann — the **impureim sandwich**: impure, then pure, then impure.
+
+```
+impure │ gather every input the decision needs (DB, HTTP, clock, config)
+pure   │ call ONE pure function — data in, decisions / events out
+impure │ act on the result — persist events, publish, respond
+```
+
+> "First, gather data from impure sources. Second, pass pure data to pure functions. Third, take the pure output from the pure functions, and do something impure with it." — Seemann, *Dependency rejection*
+
+The rule that forces this shape: **pure functions can't call impure actions, but impure actions can call pure functions.** Impurity has to sit on the outside. Seemann finds this "surprisingly often possible" — and when the core does real work, "the pure part in the middle will typically look like just a single line of code." (He pronounces *impureim* "impurium"; its only anagram is *imperium*.)
+
+### The principle: decouple decisions from effects
+
+The sandwich is the mechanics; the principle is **decoupling decisions from effects.** A pure function "only makes a decision based on input, and returns information about this decision as output" — it does not perform the effect. The shell does.
+
+> "Put all logic in pure functions that can be unit tested, and implement impure effects as humble functions that you don't need to unit test." — Seemann, *Decoupling decisions from effects*
+
+In an event-sourced codebase that decision-as-data *is* the event sequence: domain functions return `Seq<IEvent>`; the repository appends and publishes them. A signature like `SelectQuote(...) : Seq<IEvent>` is already a sandwich filling — it decides, it doesn't persist. The moment a domain function holds an `IRepository` and calls `.Save()`, decision and effect are welded together and the function can't be tested without a mock.
+
+### The refined shape: at most two impure phases
+
+Seemann later tightened the definition: a sandwich "may have at most two impure phases, but from one to three pure slices." In practice "you're going to need a pure validation phase in front, and a slim translation layer at the end," and you "keep most of the pure execution between the two impure phases."
+
+The disciplined specialization is the **Recawr sandwich** — *REad, CAlculate, WRite*:
+
+> "Read data. This step is impure. Calculate a result from the data. This step is a pure function. Write data. This step is impure."
+
+with one hard rule:
+
+> "Once you start writing data to the network, to disk, to a database, or to the user interface, you shouldn't go back to reading in more data."
+
+Read everything up front, decide, then write. "You may consider Recawr Sandwiches as a subset of all Impureim Sandwiches," and "most well-designed sandwiches follow this template."
+
+### When the pure core needs an external call partway through
+
+The hard case — and the one worth getting right. The decision can't be made from data gathered up front: you decide *something*, and only then learn what to fetch (re-quote, re-price, re-check a downstream service), then decide the rest. That's `pure → impure → pure`, which breaks the read-everything-first rule and the two-impure-phase bound; strictly, the sandwich "is no longer possible." Three answers, cheapest first:
+
+1. **Hoist the read.** Most often the mid-computation fetch can move to the front. If you *might* need the re-quote, fetch it eagerly and pass it in; decide with it in hand. You trade one possibly-wasted call for a clean Recawr sandwich. Usually the right call.
+
+2. **Two chained sandwiches.** When you genuinely can't know what to fetch until you've decided, don't inject the fetch into the domain — split the workflow at the I/O and let the shell run it:
+   - Sandwich A: `read → decide → return a "needs re-quote, here are the parameters" value`.
+   - Shell: performs the re-quote — the one impure step the domain refused to take.
+   - Sandwich B: `decide with the new quote → apply → write`.
+
+   Each domain function stays a pure filling; the *shell* owns the interleaving. This is "decouple decisions from effects" applied twice — the pragmatic answer for one or two rounds, with no new machinery:
+
+   ```csharp
+   // Shell orchestrates the interleaving; PlanOrder and ApplyQuote stay pure.
+   // PlanOrder : State -> Command -> OrderPlan   (a sum type: ReadyToPlace | NeedsReprice)
+   public Aff<Unit> PlaceOrder(PlaceOrderCommand cmd) =>
+       from state in LoadState(cmd.OrderId)              // impure: read
+       let plan = PlanOrder(state, cmd)                  // pure: decide
+       from _ in plan switch
+       {
+           ReadyToPlace p => Persist(p.Events),                       // impure: write
+           NeedsReprice r => from q in GetQuote(r.Lines)              // impure: the mid fetch
+                             from x in Persist(ApplyQuote(state, q))  // pure decide → impure write
+                             select x,
+           _              => FailAff<Unit>(Error.New("unreachable")),
+       }
+       select unit;
+   ```
+
+   The branch — *do we re-quote?* — is decided in the pure core and returned as a value (`NeedsReprice`), not taken inside it. `PlanOrder` and `ApplyQuote` need no mocks to test.
+
+3. **Interpreter / free monad.** Only when you have genuinely *N* interleaved decide-fetch rounds and chaining gets unwieldy: model the interactions as instructions in an AST and run them through an impure interpreter (Seemann, *Pure interactions*; Wlaschin's sixth approach, *dependency interpretation*). The heavy end. Wlaschin's own warning — "not a technique I would recommend unless you have a specific use-case for it"; in his example five instructions cost "around 100 extra lines of code." Reach for it last, if ever.
+
+Stay as far up the spectrum (as light) as the problem allows. Rejection → parameterization covers almost everything; the Reader monad and the interpreter are for when you've *proven* you need them.
 
 ## Workflow composition
 
@@ -301,6 +388,8 @@ When applying this lens to an existing design, ask:
 8. **Could a tuple-of-Options be a sum type?** `(Option<A>, Option<B>)` has four states: (None,None), (Some,None), (None,Some), (Some,Some). If only two or three are legal — or if each combination means something semantically different — model the legal subset as a sum type. The compiler then forces every caller to handle every case.
 9. **Are state-changing functions pure?** Domain functions take state in, return new state (or events) out. No `void` mutation. No `DateTime.UtcNow` inline — pass `now` as a parameter so tests can fix it.
 10. **Does the state itself encode its lifecycle?** If `Order` is one record with `Option<PaidAt>` and `Option<CancelledAt>` and `Option<ShippedAt>` — those are states. Model them.
+11. **Is each application service an impureim sandwich?** Read all inputs up front, call the pure domain function once, then write and publish. A domain function that holds a repository, HTTP client, or clock and calls it has fused decision and effect — lift the I/O into the shell and pass data in.
+12. **When the core seems to need a mid-decision call, did you try to reject the dependency first?** Hoist the read to the front, or split into two shell-orchestrated sandwiches, before parameterizing a callback — and reserve the interpreter/free monad for genuine multi-round interleaving.
 
 A "yes" to all of these means the design is in good Wlaschin shape. Anywhere you answer "no", there's a class of bugs the type system isn't catching yet.
 
@@ -324,4 +413,6 @@ Wlaschin's perspective overlaps DDD but adds the type-driven angle. Use this ski
 
 - Scott Wlaschin, *Domain Modeling Made Functional* (Pragmatic Bookshelf, 2018) — the book.
 - F# for Fun and Profit (fsharpforfunandprofit.com) — Wlaschin's site, with the "Designing with types" series and "Railway-oriented programming" essay that became chapters of the book.
-- Mark Seemann's writing on `IO<>`-typed boundaries and functional architecture in C# — a practical bridge for .NET shops on the OO-to-functional path.
+- Mark Seemann, *ploeh blog* (blog.ploeh.dk) — the C# functional-architecture canon for keeping the domain pure and pushing effects to the shell: *Decoupling decisions from effects* (2016), *Dependency rejection* (2017), *Pure interactions* (2017), *Impureim sandwich* (2020), *What's a sandwich?* (2023), *Recawr sandwich* (2025).
+- Scott Wlaschin, *Six approaches to dependency injection* (fsharpforfunandprofit.com) — the spectrum from dependency retention through rejection, parameterization, the Reader monad, to dependency interpretation, with a recommendation for each.
+- *Functional core, imperative shell* (functional-architecture.org), after Gary Bernhardt's "Boundaries" — the originating split between a pure core and an impure shell.
