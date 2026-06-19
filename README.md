@@ -163,6 +163,7 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | Skill | Apply when |
 | --- | --- |
 | [`running-lean`](plugins/engineering-practices/skills/running-lean/SKILL.md) | Finding product/market fit — Lean Canvas, Customer Factory, 90-day cycles (Ash Maurya). |
+| [`user-story-mapping`](plugins/engineering-practices/skills/user-story-mapping/SKILL.md) | Mapping the whole user journey to plan releases and carve a walking-skeleton MVP — backbone & ribs, slice by outcome (Jeff Patton). |
 | [`splitting-user-stories`](plugins/engineering-practices/skills/splitting-user-stories/SKILL.md) | Slicing big stories into INVEST-compliant pieces (Wake, Lawrence, Cohn, Adzic, Patton). |
 | [`ticket-writer`](plugins/engineering-practices/skills/ticket-writer/SKILL.md) | Drafting Jira / Linear / GitHub issues that pass review (problem-first structure, INVEST, SMART). |
 
