@@ -1,6 +1,6 @@
 ---
 name: observability
-description: Apply modern observability practices from Charity Majors / Liz Fong-Jones / George Miranda's "Observability Engineering" (2022), Cindy Sridharan's foundational essays, Google's SRE books, and the OpenTelemetry standard. Covers observability vs. monitoring, structured logging, metrics (RED, USE, Four Golden Signals), distributed tracing, SLO/SLI/error-budget discipline, high-cardinality wide events, sampling, and symptom-based alerting. Use when designing instrumentation for a new service, debugging a production issue, setting up SLOs, choosing what to log/measure/trace, or evaluating whether an existing system is actually observable.
+description: Apply modern observability practices from Charity Majors / Liz Fong-Jones / George Miranda's "Observability Engineering" (O'Reilly), Charity Majors' recent Observability 2.0 writing (charity.wtf & honeycomb.io, 2024-2025 — one source of truth via arbitrarily-wide structured events, aggregate at read time, observability-driven development), Cindy Sridharan's essays, Google's SRE books, and the OpenTelemetry standard. Covers observability vs. monitoring, Observability 1.0 vs 2.0, wide/canonical high-cardinality structured events, the three signals (traces/metrics/logs) with OpenTelemetry semantic conventions + context propagation, metrics (RED, USE, Four Golden Signals), distributed tracing, sampling, SLO/SLI/error-budget discipline, observability-driven development, symptom-based alerting, and what to instrument vs what's noise. Use when adding instrumentation to new code, deciding what to log/measure/trace, structuring log events, choosing metric labels vs trace/event attributes, debugging a production issue, setting up SLOs, or evaluating whether code is actually observable.
 ---
 
 # Observability
@@ -18,6 +18,41 @@ Apply this skill when instrumenting a service, debugging a production issue, def
 **Wide, high-cardinality structured events beat the "three pillars".** The traditional split into logs / metrics / traces is increasingly seen as artificial. A well-structured event (one per request, with all relevant attributes) can serve as log, metric, and trace span — and crucially supports debugging questions that pre-aggregated metrics cannot answer.
 
 **Debug from data, not intuition.** Engineers who can interrogate production directly fix bugs faster than those who guess based on what the system *should* be doing.
+
+---
+
+## Observability 2.0 — One Source of Truth (Charity Majors, 2024–2025)
+
+Majors' recent writing sharpens the three-pillars critique into a versioned distinction:
+
+> "Observability 1.0 has three pillars and many sources of truth, scattered across disparate tools and formats. Observability 2.0 has one source of truth — arbitrarily-wide structured log events — from which you can derive all the other data types." — Charity Majors
+
+The single key difference is **when you aggregate and where you store**:
+
+- **1.0 aggregates at *write* time.** You decide up front what to measure, increment a counter, drop the context, and store the same request's telemetry again and again across separate silos (APM, RUM, logs, metrics, tracing, profiling, product analytics). You pay to store it repeatedly and fight cardinality forever.
+- **2.0 aggregates at *read* time.** Store one wide structured event per unit of work, keep the raw context, and decide how to slice and aggregate later, at query time. Metrics, traces, heatmaps, and SLOs are all *derived* from those events. "Store it once, use it for everything."
+
+Why it matters:
+
+- **No dead ends.** From one event you can pivot to its trace, watch it over time, derive a metric, or define an SLO — without switching tools or losing context.
+- **Arbitrary slicing.** Because raw events keep high-cardinality fields (`user_id`, `build_id`, feature-flag values), you can answer questions you never anticipated. *"Observability 1.0 is a dinner knife; 2.0 is a scalpel."*
+- **Cost tracks the business.** In 2.0 the cost drivers are traffic × architecture × instrumentation density — they grow with your business and the value you get, not with how many pillars you bought. *"Poor observability is the dark matter of engineering teams."*
+- **It's for *developing*, not just operating.** 1.0 answers "how do I operate my code"; 2.0 answers "how do I develop my code" — fast, interactive feedback while you build, not just incident response.
+
+**You don't need a new vendor to get most of this — change how you instrument.** On any backend (including OpenTelemetry over "1.0" stores): attach all the context to each unit of work (one rich event/span per request — see *High-Cardinality Wide Events* below), prefer high-cardinality attributes on events/spans over new metric labels, and debug from traces + structured events rather than from pre-built dashboards.
+
+---
+
+## Observability-Driven Development (ODD)
+
+Majors frames observability as a development feedback loop, not just an ops safety net:
+
+- **Instrument as you write the code** — add the span and event fields in the *same change* as the behaviour, not as a follow-up.
+- **Then inspect your code through the lens of that instrumentation** right after it deploys.
+- **You're not done when it merges — you're done when you've watched it work in production.** Look at the new path's real latency, errors, and the cohort that hit it before calling it complete.
+- **Tie the work to outcomes.** Wide events let you connect "my change" to "this effect on a user / the business."
+
+Pairs naturally with progressive delivery: ship behind a flag, watch the instrumented behaviour for the cohort on the new path, then widen the rollout.
 
 ---
 
@@ -194,7 +229,7 @@ The vendor-neutral standard for instrumentation. Replaces a fragmented past (Ope
 - **Semantic conventions** — standardized attribute names (`http.method`, `db.system`, `messaging.destination`). Use them.
 
 ### .NET specifics
-Your Cedar codebase already uses OpenTelemetry. Typical setup:
+A typical ASP.NET Core host wires OpenTelemetry once at startup (use your service name for the source/meter):
 
 ```csharp
 services.AddOpenTelemetry()
@@ -202,23 +237,24 @@ services.AddOpenTelemetry()
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
         .AddNpgsql()                                     // PostgreSQL
-        .AddSource("Cedar")                              // custom spans
+        .AddSource(ServiceName)                          // custom spans
         .AddOtlpExporter())
     .WithMetrics(b => b
         .AddAspNetCoreInstrumentation()
         .AddRuntimeInstrumentation()
-        .AddMeter("Cedar")
+        .AddMeter(ServiceName)
         .AddOtlpExporter());
 ```
 
-Custom spans use `Activity` (System.Diagnostics):
+Custom spans use `Activity` (System.Diagnostics) from a shared `ActivitySource`; tags become span attributes:
 ```csharp
-using var activity = activitySource.StartActivity("MarkupTemplate.CalculateRate");
-activity?.SetTag("template.name", templateName);
-activity?.SetTag("weight.kg", weight);
+using var activity = activitySource.StartActivity("Copy.SelectItinerary");
+activity?.SetTag("carrier_service.count", reference.CarrierServices.Length);
 // ... work ...
-activity?.SetTag("rate", calculatedRate);
+activity?.SetTag("copy.outcome", outcome);
 ```
+
+Metrics use a `Meter` + a counter/histogram. Keep high-cardinality fields (ids) OFF metric tags and ON the span/event instead.
 
 ### Auto-instrumentation
 Adds spans automatically for HTTP, DB, queues, runtime. Get most of the value for almost no code. Always start here before hand-instrumenting.
@@ -381,16 +417,16 @@ Without observability, this loop relies on reading code and guessing. With it, t
 
 ---
 
-## Cedar-Specific Notes
+## Applying this to a new feature
 
-Cedar already integrates OpenTelemetry. Things worth verifying / improving:
+When you add or change a unit of work (an endpoint, a consumer, a job):
 
-- **Add custom spans** around markup-calculation logic (`MarkupTemplate.CalculateRate`, `WeightBand.Resolve`, `PhMarkUpService.GetRates`) with attributes for template name, weight, bound type, country.
-- **Wrap calls to the PH markup service** in their own span with timeout + error attributes. Failures and slow responses there are a top operational concern.
-- **Trace feature-flag evaluations** for the weight-bands rollout — knowing which traffic hit which flag value is essential for diagnosing rollout issues.
-- **Tag spans with tenant / shipper / country** so you can slice by them in any query.
-- **Emit a canonical log line at the end of every API call** with the full request context.
-- **Define SLOs.** The most useful ones: percentage of `/v1/markups/calculate` calls returning successfully in < 200ms over 30 days; percentage of PH-markup-service calls completing without retry.
+- **Wrap the business operation in a span** (`ActivitySource.StartActivity`) and tag it with the inputs that identify the work plus the outcome.
+- **Wrap each outbound call** (HTTP, DB, queue) in its own span with timeout / error attributes — slow or failing downstreams are usually the top operational concern.
+- **Emit one canonical event** at the end with the full context (ids, the decision taken, the outcome, downstream durations) instead of scattering narrow log lines through the request.
+- **Tag with the slice keys** you'll want to group by later (tenant, customer, country, feature-flag value).
+- **Emit an outcome metric** (e.g. a `{operation}_outcome{result=...}` counter) so dashboards and alerts can track success vs each failure mode — with the outcome *bucketed*, never a high-cardinality id.
+- **Define an SLO** for the operation's user-visible success + latency, and alert on its burn rate.
 
 ---
 
@@ -442,7 +478,7 @@ For debugging:
 - **Google SRE**, *Site Reliability Engineering* (2016) and *The Site Reliability Workbook* (2018) — SLI/SLO/error budgets, alerting, postmortems. Free online.
 - **Niall Murphy & Liz Fong-Jones**, *Implementing Service Level Objectives* (O'Reilly, 2020) — practical SLO design.
 - **Brendan Gregg**, *Systems Performance* (2nd ed., 2020) — USE method, performance analysis fundamentals.
-- **Charity Majors**, *honeycomb.io blog* and her personal blog *charity.wtf* — provocative essays on observability culture.
+- **Charity Majors**, *Observability 2.0* writing (2024-2025): "It's Time to Version Observability: Introducing Observability 2.0" (honeycomb.io) and "There Is Only One Key Difference Between Observability 1.0 and 2.0" (charity.wtf, Nov 2024) — the single-source-of-truth / wide-events thesis; plus "Observability: the present and future" (The Pragmatic Engineer, 2025). Ongoing essays on honeycomb.io and charity.wtf.
 - **OpenTelemetry documentation** — opentelemetry.io. Specs, semantic conventions, language SDKs.
 - **Stripe Engineering**, *Canonical Log Lines* essay — the wide-event pattern in practice.
 - **Tom Wilkie**, *The RED Method* — original talk and Weaveworks blog post.

@@ -151,6 +151,7 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | Skill | Apply when |
 | --- | --- |
 | [`continuous-delivery`](plugins/engineering-practices/skills/continuous-delivery/SKILL.md) | Designing pipelines, branching, deploys, DORA metrics (Humble & Farley). |
+| [`pr-writer`](plugins/engineering-practices/skills/pr-writer/SKILL.md) | Writing, scoping, and sizing pull requests that are fast to review — small CLs, Conventional-Commit titles, stand-alone descriptions (Google eng-practices, GitHub, SmartBear). |
 | [`kanban`](plugins/engineering-practices/skills/kanban/SKILL.md) | Setting up boards, WIP limits, flow metrics (Hammarberg & Sundén, Anderson, Leopold). |
 | [`lean-software-development`](plugins/engineering-practices/skills/lean-software-development/SKILL.md) | Mary & Tom Poppendieck's seven principles — eliminate waste, amplify learning, see the whole. |
 | [`flow-efficiency`](plugins/engineering-practices/skills/flow-efficiency/SKILL.md) | Diagnosing why "busy" doesn't equal "shipping" — Modig & Åhlström's flow-efficiency framework. |
