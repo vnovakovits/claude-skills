@@ -73,7 +73,7 @@ Write them as a **claim or a question, verbatim and specific** ("if Orchid has n
 - **Frames per phase** of the process ("Request", "Fan-out", "Outcome", "Settlement") keep a long timeline navigable; the frame titles narrate the process on their own.
 - **Swimlanes**: happy path along the top; alternative/failure flows stacked below; external systems' stickies aligned in their own horizontal band so each integration reads as a column of ask → answer.
 - **Stick to the canonical colors** (map them once in a legend sticky if the tool's palette differs). Color IS the grammar; a wrong-colored sticky is a wrong statement.
-- **Connectors sparingly**: the timeline carries most causality; use arrows only where flow jumps (policy → command far away, out-of-order arrivals).
+- **As few arrows as possible.** The timeline and adjacency ARE the causality: stickies sitting next to each other on the same line need no connector — if one is there, delete it. Reserve arrows for exactly three cases: a flow jump the layout can't show (across frames, out-of-order arrivals), fan-out / convergence (one policy → many commands, many events → one outcome), and arrows that carry a caption (a condition like "only if X"). An arrow that adds nothing a reader wouldn't get from position is noise.
 - Keep stickies terse — the phrase on the sticky is the ubiquitous language; put message/type names (`ShipmentCancellationCompleted`) on the sticky when the model documents an existing system.
 
 ## From Model to Code
