@@ -124,6 +124,7 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | [`domain-modeling-made-functional`](plugins/engineering-practices/skills/domain-modeling-made-functional/SKILL.md) | DDD in a typed functional language — making illegal states unrepresentable (Scott Wlaschin). |
 | [`responsibility-driven-design`](plugins/engineering-practices/skills/responsibility-driven-design/SKILL.md) | Distributing behaviour across objects — Wirfs-Brock's CRC cards, role stereotypes, Tell-Don't-Ask. |
 | [`event-storming`](plugins/engineering-practices/skills/event-storming/SKILL.md) | Discovering business processes and bounded contexts collaboratively (Alberto Brandolini). |
+| [`process-level-event-storming`](plugins/engineering-practices/skills/process-level-event-storming/SKILL.md) | Modeling ONE process in the full sticky-note grammar — commands, policies, read models, hot spots (Brandolini's Process Modeling level). |
 | [`api-design`](plugins/engineering-practices/skills/api-design/SKILL.md) | Designing REST / GraphQL / gRPC endpoints — versioning, pagination, errors, idempotency. |
 | [`observability`](plugins/engineering-practices/skills/observability/SKILL.md) | Instrumenting services — structured logging, RED/USE/golden signals, tracing, SLOs. |
 | [`architecture-decision-records`](plugins/engineering-practices/skills/architecture-decision-records/SKILL.md) | Capturing significant architectural decisions in lightweight, immutable ADRs (Michael Nygard). |
