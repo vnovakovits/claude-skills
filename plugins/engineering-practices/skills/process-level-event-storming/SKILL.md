@@ -49,6 +49,7 @@ Every complete process is this loop unrolled along a timeline. When a step is mi
 6. **Alternative flows are part of the process.** The happy path alone is a brochure, not a model. Rejections, failures, timeouts, and out-of-order arrivals go on the same timeline, stacked below the happy path.
 7. **Conditions are policies, never arrow labels or IF-prefixes.** "Only if X" written on an arrow or a command hides a business rule in decoration. Give each condition its own policy sticky — "whenever A and X → …" — and keep every command unconditional.
 8. **A sticky never names its own type, and always speaks the business language.** The color/shape already says "policy" or "command" — writing the word on the sticky wastes the room the language needs. A command says what is wanted ("cancel the pallet booking"), a policy reads as a domain sentence ("whenever the carrier cannot cancel → hand it to support"); when documenting an existing system, put the technical message name in parentheses underneath.
+9. **After every event: a policy OR a read model + actor — never a bare gap.** The process continues in exactly two ways. It continues *on its own*: a policy ("whenever X → …") issues the next command. Or it continues *through a human*: the event changes a read model, an actor looks at it and issues the next command — read model → actor → command, no policy involved. An event followed directly by a command with nothing in between hides who decided; an event followed by nothing is either the explicitly terminal event or a missing sticky. This is the per-event form of rules 3 and 5.
 
 ## Completeness Walks
 
@@ -56,7 +57,7 @@ A process model is done when it survives these walks, done aloud, pointing at st
 
 - **Forward walk.** Narrate left to right: "the customer looks at …, decides to …, which makes the workflow …, which emits …, and whenever that happens we …". Any stumble is a missing sticky.
 - **Backward walk.** For each event, ask: what command produced this? Who or what issued that command? What did they look at first? Walking backwards catches issuer-less commands and blind decisions that the forward walk glosses over.
-- **Orphan check.** Events nothing reacts to — is that intentional (recorded fact) or a missing policy? Commands with no resulting event — what does success even look like?
+- **Orphan check.** Events nothing reacts to — is that intentional (the terminal event) or a missing policy / read-model-and-actor pair (rule 9)? Commands with no resulting event — what does success even look like?
 - **Silence check (external systems).** For every pink system: what happens if it never answers? If the answer is "nothing reacts to that", write it on a dark-red sticky verbatim. Missing failure paths are the single most common finding at this level.
 - **First-event check.** For every inbound event: what if it arrives before the process exists, or after it's finished? Out-of-order delivery is the norm in messaging systems.
 
