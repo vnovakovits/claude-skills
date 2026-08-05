@@ -26,16 +26,18 @@ Every complete process is this loop unrolled along a timeline. When a step is mi
 
 ## The Grammar
 
-| Sticky | Color | Form | Rule |
+| Sticky | Color & shape | Form | Rule |
 |---|---|---|---|
-| Domain Event | orange | past tense | The atom. A fact a domain expert cares about. Domain language, never "record saved". |
-| Command | blue | imperative | Every command has exactly one issuer: an actor or a policy. |
-| Actor | small yellow | role name | Who decides to issue the command. Roles, not names or departments. |
-| Aggregate / Process | large yellow | noun | What receives the command and emits the event(s). At process level this is often the process manager / workflow itself. |
-| External System | pink | system name | Something the process talks to but doesn't own. Its failures are part of YOUR process. |
-| Read Model | green | view name | What the actor looked at to decide. If you can't name it, the actor is deciding blind — hot spot. |
-| Policy | lilac | "whenever X → Y" | Reactive automation. Everything that happens without a human. Becomes a saga / process manager / event handler. |
-| Hot Spot | dark red / rotated | question or claim | Disagreement, missing knowledge, risk, unresolved decision. Capture, don't resolve. |
+| Domain Event | orange square | past tense | The atom. A fact a domain expert cares about. Domain language, never "record saved". |
+| Command | blue square | imperative | Every command has exactly one issuer: an actor or a policy. |
+| Actor | small yellow square | role name | Who decides to issue the command. Roles, not names or departments. |
+| Aggregate / Process | **wide yellow oblong** | noun | What receives the command and emits the event(s). At process level this is often the process manager / workflow itself. |
+| External System | **wide pink oblong** | system name | Something the process talks to but doesn't own. Its failures are part of YOUR process. |
+| Read Model | green square | view name | What the actor looked at to decide. If you can't name it, the actor is deciding blind — hot spot. |
+| Policy | **wide lilac oblong** | "whenever X → Y" | Reactive automation. Everything that happens without a human. Becomes a saga / process manager / event handler. |
+| Hot Spot | dark red square / slightly pivoted | question or claim | Disagreement, missing knowledge, risk, unresolved decision. Capture, don't resolve. |
+
+**Shape carries grammar too.** The flow itself (events, commands, read models, hot spots) is square stickies; the three *deciders/receivers* — aggregate/process, policy, external system — are wide oblongs ("orthogonal" stickies, i.e. landscape rectangles — never rotated diamonds), so the eye separates "what happens" from "what reacts" at a glance. Companion glossary: the [ddd-crew EventStorming cheat sheet](https://github.com/ddd-crew/eventstorming-glossary-cheat-sheet).
 
 ### Hard rules
 
@@ -78,6 +80,8 @@ Write them as a **claim or a question, verbatim and specific** ("if Orchid has n
 - **As few arrows as possible.** The timeline and adjacency ARE the causality: stickies sitting next to each other on the same line need no connector — if one is there, delete it. Reserve arrows for exactly three cases: a flow jump the layout can't show (across frames, out-of-order arrivals), fan-out / convergence (one policy → many commands, many events → one outcome), and arrows whose caption states a fact about the link itself (a routing detail like "via queue X") — a business condition is never an arrow caption; it is a policy (rule 7). An arrow that adds nothing a reader wouldn't get from position is noise.
 - **Arrows go around stickies, never over them.** An arrow crossing a sticky hides a word of the model to draw a line a reader could infer. Arrows don't have to be straight: curve or elbow them through the gaps, and pin long jumps to the top/bottom edges of their endpoints (in Miro: `start_snap`/`end_snap`) so they arc over the content instead of cutting through it. If no clean route exists, that's a hint the arrow is redundant — delete it rather than route it.
 - Keep stickies terse — the phrase on the sticky is the ubiquitous language; put message/type names (`ShipmentCancellationCompleted`) on the sticky when the model documents an existing system.
+- **Miro DSL shapes**: `shape=square` for events/commands/read models/hot spots; `shape=rectangle` for the three oblong types (aggregate/process, policy, external system). Miro renormalizes rectangle-sticky widths on every write (a `w=400` may read back as ~457 or ~492) — don't chase pixel-exact widths, the oblong-vs-square contrast is what matters.
+- **Large boards truncate board-level reads.** Miro's `layout_read`/`layout_update` at board scope silently cap out (observed at ~450 items) — new items may be missing from the DSL and `old_string` lookups fail against it. Scope EVERY read and update to the target frame or item via `?moveToWidget=<id>`; treat board-level DSL as non-authoritative on any board with more than a few hundred items. Also check for loose (frame-less) sticky clusters before claiming empty space for new frames — `context_explore` only lists frames, so a coordinate range that looks free may be covered in board-level stickies.
 
 ## From Model to Code
 
@@ -110,4 +114,5 @@ If the code has a decision arm the board doesn't show, the board is wrong. If th
 
 - **Alberto Brandolini**, *Introducing EventStorming* (Leanpub) — Part "Process Modelling"; the picture-that-explains-everything diagram.
 - **Alberto Brandolini**, "50,000 Orange Stickies Later" (talk) — where process level sits between Big Picture and Software Design.
+- **ddd-crew**, [EventStorming Glossary & Cheat sheet](https://github.com/ddd-crew/eventstorming-glossary-cheat-sheet) — the concise glossary for every sticky type across all three levels.
 - Companion skills: `event-storming` (the whole method, workshop facilitation), `event-sourcing-cqrs` and `domain-driven-design` (turning the model into aggregates and sagas).
