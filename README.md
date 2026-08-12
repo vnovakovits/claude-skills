@@ -100,7 +100,7 @@ If Claude isn't picking up the skill you want, just mention it by name — *"app
 
 ## Disabling skills you don't want
 
-You don't have to take all 31.
+You don't have to take all 39.
 
 - **Plugin route:** open Claude Code's skill settings and toggle individual skills off.
 - **Copy route:** delete the unwanted folder from `~/.claude/skills/`.
@@ -167,6 +167,7 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | [`running-lean`](plugins/engineering-practices/skills/running-lean/SKILL.md) | Finding product/market fit — Lean Canvas, Customer Factory, 90-day cycles (Ash Maurya). |
 | [`user-story-mapping`](plugins/engineering-practices/skills/user-story-mapping/SKILL.md) | Mapping the whole user journey to plan releases and carve a walking-skeleton MVP — backbone & ribs, slice by outcome (Jeff Patton). |
 | [`splitting-user-stories`](plugins/engineering-practices/skills/splitting-user-stories/SKILL.md) | Slicing big stories into INVEST-compliant pieces (Wake, Lawrence, Cohn, Adzic, Patton). |
+| [`example-mapping`](plugins/engineering-practices/skills/example-mapping/SKILL.md) | Breaking a story or spec into rules, concrete examples, and open questions on a four-colour map; audit mode checks whether a written spec's examples cover its rules (Matt Wynne). |
 | [`ticket-writer`](plugins/engineering-practices/skills/ticket-writer/SKILL.md) | Drafting Jira / Linear / GitHub issues that pass review (problem-first structure, INVEST, SMART). |
 
 ### Language-specific
