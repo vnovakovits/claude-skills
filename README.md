@@ -123,6 +123,7 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | [`domain-driven-design`](plugins/engineering-practices/skills/domain-driven-design/SKILL.md) | Modeling complex domains — bounded contexts, aggregates, ubiquitous language (Evans & Vernon). |
 | [`domain-modeling-made-functional`](plugins/engineering-practices/skills/domain-modeling-made-functional/SKILL.md) | DDD in a typed functional language — making illegal states unrepresentable (Scott Wlaschin). |
 | [`responsibility-driven-design`](plugins/engineering-practices/skills/responsibility-driven-design/SKILL.md) | Distributing behaviour across objects — Wirfs-Brock's CRC cards, role stereotypes, Tell-Don't-Ask. |
+| [`event-sourcing-cqrs`](plugins/engineering-practices/skills/event-sourcing-cqrs/SKILL.md) | Designing commands, write-side state, appliers, event payloads, streams and projections — plus schema versioning and how values are encoded on the wire (Greg Young, Zimarev). |
 | [`event-storming`](plugins/engineering-practices/skills/event-storming/SKILL.md) | Discovering business processes and bounded contexts collaboratively (Alberto Brandolini). |
 | [`process-level-event-storming`](plugins/engineering-practices/skills/process-level-event-storming/SKILL.md) | Modeling ONE process in the full sticky-note grammar — commands, policies, read models, hot spots (Brandolini's Process Modeling level). |
 | [`api-design`](plugins/engineering-practices/skills/api-design/SKILL.md) | Designing REST / GraphQL / gRPC endpoints — versioning, pagination, errors, idempotency. |

@@ -1,6 +1,6 @@
 ---
 name: event-sourcing-cqrs
-description: Apply Event Sourcing and CQRS principles — from Greg Young's CQRS Documents, Alexey Zimarev's Hands-On Domain-Driven Design with .NET Core, and Microsoft's Azure Architecture patterns — when designing commands, write-side state, IHoldState interfaces, applier functions, event payloads, stream structures, aggregate boundaries, read models, or projections. Use when asked about what belongs in state vs events, reviewing an applier for correctness, deciding whether a field is write-side or read-side, sizing an IHoldState interface, designing a new command handler, writing a query handler, understanding why write-side state should be minimal, or any CQRS/ES architectural decision. Always activate this skill for ES/CQRS questions rather than relying on general knowledge alone.
+description: Apply Event Sourcing and CQRS principles — from Greg Young's CQRS Documents, Alexey Zimarev's Hands-On Domain-Driven Design with .NET Core, and Microsoft's Azure Architecture patterns — when designing commands, write-side state, IHoldState interfaces, applier functions, event payloads, stream structures, aggregate boundaries, read models, or projections. Also covers schema evolution — Greg Young's migration ladder (weak schema, upcasting, double publish, copy-replace, copy-transform, in-place transformation, versioning bankruptcy, internal vs external models) — and how values are encoded on the wire, including why enums must never be persisted as inherited ordinals. Use when asked about what belongs in state vs events, reviewing an applier for correctness, deciding whether a field is write-side or read-side, sizing an IHoldState interface, designing a new command handler, writing a query handler, understanding why write-side state should be minimal, versioning or migrating an event schema, choosing how to persist an enum or other constrained value set in an event stream or document DB, or any CQRS/ES architectural decision. Always activate this skill for ES/CQRS questions rather than relying on general knowledge alone.
 ---
 
 # Event Sourcing and CQRS (Greg Young, Alexey Zimarev)
@@ -425,14 +425,31 @@ The event is historically accurate: even if the product catalogue later renames 
 
 Compensating events (`ReservationCancelled`, `OrderRefunded`) preserve the audit trail and show that an object *was* in a prior state at a specific point in time. The append-only constraint also distributes far more easily — fewer locks, better horizontal scaling.
 
-### Events Cannot Be Modified — Versioning Strategies
+### Events Cannot Be Modified — The Migration Ladder
 
-Events are permanent once written. When domain concepts evolve:
+Events are permanent once written. The governing rule, from Young's *Versioning in an Event Sourced System*:
 
-1. **Tolerant deserialization** — consumers ignore unknown fields, use defaults for missing ones. Handles additive non-breaking changes.
-2. **Versioned event types** — `Events.V1.ClassifiedAdPublished`, `Events.V2.ClassifiedAdPublished`. Consumers dispatch on version.
-3. **Upcasting** — register transformation functions that convert old schemas to current during deserialization. Chain upcasters; application code only handles the latest version. Stored events remain unchanged.
-4. **In-place migration** — rewrite historical events in the store. Last resort only — breaks immutability and undermines the audit trail.
+> "A new version of an event must be convertible from the old version of the event. If not, it is not a new version of the event but rather a new event." — Greg Young
+
+Reach for the **cheapest rung that works**. The first group changes nothing on disk; the second rewrites stored data and gets progressively more disruptive.
+
+**On read — nothing on disk changes:**
+
+1. **Weak Schema / tolerant reader** — Young's primary recommendation. JSON or XML, mapped by *name*: field in both → use the payload value; field in payload only → ignore it; field in the type only → use a default. Cost: *"You are no longer allowed to rename something."* Also validate programmatically that what you mapped contains what you expected — a silently-defaulted field is worse than a parse failure.
+2. **Upcasting** — transformation functions converting old schemas to current during deserialization. Chain them (v1→v2→v3), one hop each. Stored events are untouched. Cost: every node needs the schema, or you centralise resolution and take on a framework dependency and an availability concern.
+3. **Versioned event types** — `Events.V1.X`, `Events.V2.X`; consumers dispatch on version. Young warns against leaning on this: *"You should generally avoid versioning your system via types in this way"* — it couples every consumer to your type definitions, and the pain scales with consumer count.
+4. **Double Publish** — producers write both versions while subscribers catch up. Explicitly *"fails when you need to replay a projection."* A band-aid, not a strategy.
+
+**On disk — last resorts:**
+
+5. **Copy-Replace** — read the old stream, transform, write a new one, delete the original. *"Copy-Replace is the nuclear-option of versioning."* Normally needs to run offline; synchronising against commands arriving mid-migration is where it goes wrong.
+6. **Copy-Transform** — whole-store migration into a parallel system, then a BigFlip cutover. Simpler than mutating a live system, but you run two stores until projections are confirmed in sync.
+7. **In-Place Transformation** — append transformed events back to the same stream and truncate-before. Requires store support; old events resurface as *new* to every projection.
+8. **Versioning Bankruptcy** — a Copy-Transform for wholesale migrations (RDBMS → ES, old ES → new ES). Seed an `Initialized` event, keep the old system for historical reporting. *"Does not work well in continuous systems."*
+
+**The structural preventative: Internal vs External models.** Keep fine-grained internal events private and publish coarse-grained external events through a translator. The external model is the API and deserves formality and weak-schema design; the internal one stays free to change. Overhead not worth it for small systems — but it is what stops versioning pressure reaching your domain.
+
+Best of all is not needing the ladder: model events on established business concepts, and prefer short-lived aggregates, so schemas stop churning.
 
 ```csharp
 public class ClassifiedAdUpcasters : IProjection
@@ -455,6 +472,32 @@ public class ClassifiedAdUpcasters : IProjection
     }
 }
 ```
+
+### Encoding Values on the Wire — Enums and Magic Numbers
+
+A language `enum` serialized by ordinal writes `2` into the stream. That number is meaningless without the type that fixes the ordering, so renumbering the enum **silently rewrites the meaning of every stored event** — while still compiling, and still passing every test that does not assert on the encoding. By Young's convertibility rule this is the worst possible change: byte-identical payloads, different meaning, invisible in a diff.
+
+**The rule is not "always use strings." It is: the persisted representation must be an explicit, frozen, enforced contract.** Two positions satisfy that:
+
+- **By name** (Avro resolves enum symbols by name). Reordering and renumbering become free; **renaming** is now the forbidden operation — the same constraint Weak Schema already places on field names.
+- **By number** (Protobuf deliberately puts enums on the wire as integers). Safe only with the discipline Protobuf enforces around it: numbers mandatory and explicit in the schema, `reserved` ranges so deleted values are never reused, renumbering *defined* as a wire-breaking change equivalent to delete-plus-re-add, and mechanical CI enforcement (`buf breaking`).
+
+What is never defensible is the third option most systems land on by accident: an ordinal encoding inherited from whatever the serializer happened to default to, with nothing anywhere pinning it.
+
+**In hand-rolled systems, prefer names.** Both encodings have a forbidden operation, but a rename is a visible, greppable, reviewable edit, whereas a renumber is invisible. Absent Protobuf's toolchain, choose the failure mode a human can catch in review.
+
+**Unknown values.** Proto3 defaults to *open* enums specifically so an unrecognised value survives parsing; *closed* enums silently substitute the zero value, which is data corruption wearing a valid-looking type. Most language enums are effectively closed and will happily cast an unknown number — decide explicitly whether replay should throw loudly or degrade, and test it.
+
+**Migrating ordinals → names is a Weak Schema change, not a new version.** The event's meaning is unchanged; only its encoding is. So it needs no `V2`, no upcaster and no stream rewrite — just a converter that *writes* names and still *reads* the ordinals already in the streams. Many serializers already read both (Newtonsoft accepts names and integers by default; `StringEnumConverter` keeps `AllowIntegerValues` on), so the migration is often one attribute.
+
+Two rules make it stick:
+
+- **Attach the converter to the type, not to a serializer-options object.** Otherwise the encoding depends on which serializer is configured where — and a service typically has several (API, bus, event store), which is exactly how the accidental encoding arose.
+- **Pin it with a test.** Round-trip both encodings through the real deserializer, and assert the ordinals are still what they were, because ordinal-encoded events stay load-bearing forever. A test that pins the domain enum against its event twin is *not* this test — it passes if both are renumbered together.
+
+**Prefer a separate persisted enum from the domain enum**, mapped name-to-name at the boundary (the Internal vs External model applied to a single value). The domain type can then be reordered, renamed or restructured freely; only the external type is frozen. Without that boundary, every domain refactor is a wire-format decision.
+
+**The same rule governs document DBs, read-model columns and message payloads.** The line is not the storage technology — it is whether the value outlives the deploy that wrote it. Read models have an escape hatch, since they can be rebuilt from the stream. The stream itself does not.
 
 ---
 
@@ -654,6 +697,9 @@ Also write integration tests for: projection idempotency, schema evolution / upc
 - [ ] Is the payload self-describing enough to understand in isolation?
 - [ ] Can a projection build its read model from this event without external lookups?
 - [ ] Would future projections be able to derive new information from it?
+- [ ] Is every enum / constrained value encoded as an explicit frozen contract — a name, or a number with reserved ranges — rather than whatever the serializer defaults to?
+- [ ] Is that encoding pinned by a test that fails if someone renames or renumbers it?
+- [ ] Is the persisted enum a separate type from the domain enum, mapped name-to-name at the boundary?
 
 **Before designing a read model:**
 - [ ] Is it a flat DTO — no domain objects, no business logic?
