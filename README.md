@@ -83,6 +83,7 @@ Examples:
 | "Design a new endpoint for X." | `api-design` |
 | "Split this story." | `splitting-user-stories` |
 | "Write a bug report ticket." | `ticket-writer` |
+| "Make this PR description shorter and clearer." | `elements-of-style` |
 | "Why is this test brittle?" | `unit-testing-principles` |
 | "Set up a Kanban board." | `kanban`, often with `make-work-visible` |
 | "Model this domain." | `domain-driven-design`, sometimes `domain-modeling-made-functional` |
@@ -100,7 +101,7 @@ If Claude isn't picking up the skill you want, just mention it by name — *"app
 
 ## Disabling skills you don't want
 
-You don't have to take all 39.
+You don't have to take all 40.
 
 - **Plugin route:** open Claude Code's skill settings and toggle individual skills off.
 - **Copy route:** delete the unwanted folder from `~/.claude/skills/`.
@@ -170,6 +171,12 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | [`splitting-user-stories`](plugins/engineering-practices/skills/splitting-user-stories/SKILL.md) | Slicing big stories into INVEST-compliant pieces (Wake, Lawrence, Cohn, Adzic, Patton). |
 | [`example-mapping`](plugins/engineering-practices/skills/example-mapping/SKILL.md) | Breaking a story or spec into rules, concrete examples, and open questions on a four-colour map; audit mode checks whether a written spec's examples cover its rules (Matt Wynne). |
 | [`ticket-writer`](plugins/engineering-practices/skills/ticket-writer/SKILL.md) | Drafting Jira / Linear / GitHub issues that pass review (problem-first structure, INVEST, SMART). |
+
+### Writing & communication
+
+| Skill | Apply when |
+| --- | --- |
+| [`elements-of-style`](plugins/engineering-practices/skills/elements-of-style/SKILL.md) | Drafting, tightening, or proofreading any prose — PR descriptions, docs, ADRs, tickets, emails, UI copy, error messages — with Strunk's rules: active voice, positive form, concrete language, omit needless words (William Strunk Jr., E. B. White). |
 
 ### Language-specific
 
