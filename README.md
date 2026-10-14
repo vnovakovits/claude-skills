@@ -86,6 +86,7 @@ Examples:
 | "Make this PR description shorter and clearer." | `elements-of-style` |
 | "Why is this test brittle?" | `unit-testing-principles` |
 | "Set up a Kanban board." | `kanban`, often with `make-work-visible` |
+| "Review our change-request / prioritisation process." | `accidental-cio`, often with `flow-efficiency` and `kanban` |
 | "Model this domain." | `domain-driven-design`, sometimes `domain-modeling-made-functional` |
 
 If Claude isn't picking up the skill you want, just mention it by name — *"apply the `refactoring` skill to this method"* — and it will pull it in.
@@ -101,7 +102,7 @@ If Claude isn't picking up the skill you want, just mention it by name — *"app
 
 ## Disabling skills you don't want
 
-You don't have to take all 40.
+You don't have to take all 41.
 
 - **Plugin route:** open Claude Code's skill settings and toggle individual skills off.
 - **Copy route:** delete the unwanted folder from `~/.claude/skills/`.
@@ -171,6 +172,12 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | [`splitting-user-stories`](plugins/engineering-practices/skills/splitting-user-stories/SKILL.md) | Slicing big stories into INVEST-compliant pieces (Wake, Lawrence, Cohn, Adzic, Patton). |
 | [`example-mapping`](plugins/engineering-practices/skills/example-mapping/SKILL.md) | Breaking a story or spec into rules, concrete examples, and open questions on a four-colour map; audit mode checks whether a written spec's examples cover its rules (Matt Wynne). |
 | [`ticket-writer`](plugins/engineering-practices/skills/ticket-writer/SKILL.md) | Drafting Jira / Linear / GitHub issues that pass review (problem-first structure, INVEST, SMART). |
+
+### Leadership & operating model
+
+| Skill | Apply when |
+| --- | --- |
+| [`accidental-cio`](plugins/engineering-practices/skills/accidental-cio/SKILL.md) | Designing or reviewing an IT operating model — intake/prioritisation/governance processes, funding models, decision rights, team structure, strategy-to-execution (Scott Millett; Cynefin, Wardley, Beyond Budgeting, Team Topologies). |
 
 ### Writing & communication
 

@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "engineering-practices",
-      "description": "Forty engineering-practice skills covering design (Clean Code, SOLID, CUPID, DDD, Hexagonal Architecture), testing (TDD, BDD, Khorikov's unit-testing principles), refactoring (Fowler, Kerievsky, Tidy First, Feathers), delivery (CD, Kanban, Lean, Flow), product (Running Lean, Story Splitting, Example Mapping, Ticket Writing), writing (Strunk's Elements of Style), and language-specific helpers (LanguageExt for C#).",
+      "description": "Forty-one engineering-practice skills covering design (Clean Code, SOLID, CUPID, DDD, Hexagonal Architecture), testing (TDD, BDD, Khorikov's unit-testing principles), refactoring (Fowler, Kerievsky, Tidy First, Feathers), delivery (CD, Kanban, Lean, Flow), product (Running Lean, Story Splitting, Example Mapping, Ticket Writing), leadership & operating model (The Accidental CIO), writing (Strunk's Elements of Style), and language-specific helpers (LanguageExt for C#).",
       "author": {
         "name": "vnovakovits"
       },
