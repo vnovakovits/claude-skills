@@ -1,6 +1,6 @@
 ---
 name: event-sourcing-cqrs
-description: Apply Event Sourcing and CQRS principles — from Greg Young's CQRS Documents, Alexey Zimarev's Hands-On Domain-Driven Design with .NET Core, and Microsoft's Azure Architecture patterns — when designing commands, write-side state, IHoldState interfaces, applier functions, event payloads, stream structures, aggregate boundaries, read models, or projections. Also covers schema evolution — Greg Young's migration ladder (weak schema, upcasting, double publish, copy-replace, copy-transform, in-place transformation, versioning bankruptcy, internal vs external models) — and how values are encoded on the wire, including why enums must never be persisted as inherited ordinals. Use when asked about what belongs in state vs events, reviewing an applier for correctness, deciding whether a field is write-side or read-side, sizing an IHoldState interface, designing a new command handler, writing a query handler, understanding why write-side state should be minimal, versioning or migrating an event schema, choosing how to persist an enum or other constrained value set in an event stream or document DB, or any CQRS/ES architectural decision. Always activate this skill for ES/CQRS questions rather than relying on general knowledge alone.
+description: Apply Event Sourcing and CQRS principles — from Greg Young's CQRS Documents, Alexey Zimarev's Hands-On Domain-Driven Design with .NET Core, and Microsoft's Azure Architecture patterns — when designing commands, write-side state, IHoldState interfaces, applier functions, event payloads, stream structures, aggregate boundaries, read models, or projections. Also covers schema evolution — Greg Young's migration ladder (weak schema, upcasting, double publish, copy-replace, copy-transform, in-place transformation, versioning bankruptcy, internal vs external models) — and how values are encoded on the wire, including why enums must never be persisted as inherited ordinals and why events should store primitives rather than domain value objects. Use when asked about what belongs in state vs events, reviewing an applier for correctness, deciding whether a field is write-side or read-side, sizing an IHoldState interface, designing a new command handler, writing a query handler, understanding why write-side state should be minimal, versioning or migrating an event schema, choosing how to persist an enum or other constrained value set in an event stream or document DB, deciding whether a value object or a nested object belongs in an event payload, adding a field to an already-persisted event, or any CQRS/ES architectural decision. Always activate this skill for ES/CQRS questions rather than relying on general knowledge alone.
 ---
 
 # Event Sourcing and CQRS (Greg Young, Alexey Zimarev)
@@ -499,6 +499,36 @@ Two rules make it stick:
 
 **The same rule governs document DBs, read-model columns and message payloads.** The line is not the storage technology — it is whether the value outlives the deploy that wrote it. Read models have an escape hatch, since they can be rebuilt from the stream. The stream itself does not.
 
+### Value Objects in the Domain, Primitives in the Event
+
+The enum rule generalises to every domain type: **the domain speaks in value objects; the event records primitives.** The aggregate method takes the value object and flattens it when it raises the event. Zimarev's sample code does this throughout:
+
+```csharp
+public void UpdatePrice(Price price) =>
+    Apply(new Events.ClassifiedAdPriceUpdated
+    {
+        Id = Id,
+        Price = price.Amount,                          // decimal, not Price
+        CurrencyCode = price.Currency.CurrencyCode     // string, not Currency
+    });
+```
+
+Every event class in his samples holds only `Guid`, `string`, `decimal`, `int`. Young's Weak Schema points the same way: a tolerant reader maps payload fields onto the event **by name**, which only works when the payload is named simple fields rather than reconstructed domain types.
+
+**Why a serialized value object hurts:**
+
+1. **Replay runs the constructor.** A value object that validates (a GTIN check digit, a length limit, a non-empty guard) re-validates every historical event on load. Tighten the rule and old events, valid when written, stop deserializing — the aggregate can no longer rehydrate. A primitive always loads; the fact stays the fact.
+2. **Domain refactors become wire changes.** Rename a value object's property, split it, swap the library behind it (Joda Money → something else) and the stored JSON changes shape. This is the Internal model leaking into the External one.
+3. **Nesting is all-or-nothing.** Flat fields are matched one by one; a nested object is one unit. Moving flat fields into a nested object later — or back — needs an upcaster for every stream already written.
+
+**The counter-view.** Oskar Dudycz keeps strongly typed ids and value objects in event *types*, and writes the serialization explicitly so the stored shape stays primitive. EventFlow does the same with per-type JSON converters. That is compatible with this rule: what matters is the **stored shape** (plain, flat, stable), not the C# type of the field — provided the converter never runs domain validation on read. When in doubt, use primitives in the event type; it removes the converter as a thing to get wrong.
+
+**Grouping fields only to save code is not a reason to nest them in the event.** If the same handful of fields repeats across the domain, introduce the value object *inside the domain* (parsing, rules, trimming) and flatten it at the point the event is built. The repetition in the domain shrinks; the stored events stay flat.
+
+**Adding a field to a persisted shape.** Make it optional with a default (nullable, or `= []`), so events written before it existed replay with the default. Pin that with a test that deserializes the old JSON through every serializer that reads the stream. Do not mark such a member `required`: System.Text.Json rejects a payload that lacks a `required` member, so old events stop loading.
+
+**Decide the stored shape before the first production event.** Before then a reshape costs a code edit; afterwards it costs an upcaster or a stream migration (see the ladder above).
+
 ---
 
 ## Projections
@@ -700,6 +730,9 @@ Also write integration tests for: projection idempotency, schema evolution / upc
 - [ ] Is every enum / constrained value encoded as an explicit frozen contract — a name, or a number with reserved ranges — rather than whatever the serializer defaults to?
 - [ ] Is that encoding pinned by a test that fails if someone renames or renumbers it?
 - [ ] Is the persisted enum a separate type from the domain enum, mapped name-to-name at the boundary?
+- [ ] Does the payload hold primitives (or a converter that writes them), not domain value objects that validate on construction?
+- [ ] Is every field flat and named for what it records, with no nesting added just to group fields?
+- [ ] Is every field added after first persistence optional with a default, and pinned by an old-JSON replay test through each serializer that reads the stream?
 
 **Before designing a read model:**
 - [ ] Is it a flat DTO — no domain objects, no business logic?
