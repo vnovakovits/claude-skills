@@ -104,7 +104,7 @@ If Claude isn't picking up the skill you want, just mention it by name — *"app
 
 ## Disabling skills you don't want
 
-You don't have to take all 43.
+You don't have to take all 48.
 
 - **Plugin route:** open Claude Code's skill settings and toggle individual skills off.
 - **Copy route:** delete the unwanted folder from `~/.claude/skills/`.
@@ -123,6 +123,7 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | [`solid-principles`](plugins/engineering-practices/skills/solid-principles/SKILL.md) | Designing classes, structuring inheritance, defining interfaces, organizing dependencies. |
 | [`cupid-properties`](plugins/engineering-practices/skills/cupid-properties/SKILL.md) | Evaluating code quality through Dan North's "joyful code" lens — Composable, Unix philosophy, Predictable, Idiomatic, Domain-based. |
 | [`fractal-architecture`](plugins/engineering-practices/skills/fractal-architecture/SKILL.md) | Sizing methods/classes against working-memory limits (Mark Seemann — "Code That Fits in Your Head"). |
+| [`philosophy-of-software-design`](plugins/engineering-practices/skills/philosophy-of-software-design/SKILL.md) | Designing or reviewing a module's shape — deep vs shallow modules, information hiding, pulling complexity down, defining errors out of existence, the red-flags catalogue, plus the deletion test and the two-adapter rule for seams (John Ousterhout). |
 | [`hexagonal-clean-architecture`](plugins/engineering-practices/skills/hexagonal-clean-architecture/SKILL.md) | Structuring an application around its domain — Ports & Adapters, Onion, Clean Architecture. |
 | [`domain-driven-design`](plugins/engineering-practices/skills/domain-driven-design/SKILL.md) | Modeling complex domains — bounded contexts, aggregates, ubiquitous language (Evans & Vernon). |
 | [`domain-modeling-made-functional`](plugins/engineering-practices/skills/domain-modeling-made-functional/SKILL.md) | DDD in a typed functional language — making illegal states unrepresentable (Scott Wlaschin). |
@@ -152,6 +153,12 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | [`tidy-first`](plugins/engineering-practices/skills/tidy-first/SKILL.md) | Separating "tidyings" from behaviour changes — Kent Beck's economic view of software design. |
 | [`working-effectively-with-legacy-code`](plugins/engineering-practices/skills/working-effectively-with-legacy-code/SKILL.md) | Changing code that has no tests — characterization tests, seams, dependency-breaking refactorings (Feathers). |
 | [`pragmatic-programmer`](plugins/engineering-practices/skills/pragmatic-programmer/SKILL.md) | General heuristics — DRY, orthogonality, tracer bullets, broken windows (Hunt & Thomas). |
+
+### Debugging
+
+| Skill | Apply when |
+| --- | --- |
+| [`debugging`](plugins/engineering-practices/skills/debugging/SKILL.md) | Something is broken, failing, flaky or slow — build a red feedback loop first, then minimise, hypothesise, divide and conquer, and prove the fix by removing it (David Agans's nine rules, Andreas Zeller's systematic debugging). |
 
 ### Delivery & flow
 
@@ -190,6 +197,12 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | Skill | Apply when |
 | --- | --- |
 | [`elements-of-style`](plugins/engineering-practices/skills/elements-of-style/SKILL.md) | Drafting, tightening, or proofreading any prose — PR descriptions, docs, ADRs, tickets, emails, UI copy, error messages — with Strunk's rules: active voice, positive form, concrete language, omit needless words (William Strunk Jr., E. B. White). |
+
+### Working with coding agents
+
+| Skill | Apply when |
+| --- | --- |
+| [`agent-retro`](plugins/engineering-practices/skills/agent-retro/SKILL.md) | A coding-agent session went sideways or the same correction keeps coming back — mine the transcript, turn mechanical mistakes into checks and judgement calls into reviewer standards, and prune no-op lines from `CLAUDE.md` (Derby & Larsen, Shingo's poka-yoke). |
 
 ### Language-specific
 
