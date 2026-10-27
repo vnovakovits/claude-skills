@@ -104,7 +104,7 @@ If Claude isn't picking up the skill you want, just mention it by name — *"app
 
 ## Disabling skills you don't want
 
-You don't have to take all 43.
+You don't have to take all 46.
 
 - **Plugin route:** open Claude Code's skill settings and toggle individual skills off.
 - **Copy route:** delete the unwanted folder from `~/.claude/skills/`.
@@ -152,6 +152,12 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | [`tidy-first`](plugins/engineering-practices/skills/tidy-first/SKILL.md) | Separating "tidyings" from behaviour changes — Kent Beck's economic view of software design. |
 | [`working-effectively-with-legacy-code`](plugins/engineering-practices/skills/working-effectively-with-legacy-code/SKILL.md) | Changing code that has no tests — characterization tests, seams, dependency-breaking refactorings (Feathers). |
 | [`pragmatic-programmer`](plugins/engineering-practices/skills/pragmatic-programmer/SKILL.md) | General heuristics — DRY, orthogonality, tracer bullets, broken windows (Hunt & Thomas). |
+
+### Debugging
+
+| Skill | Apply when |
+| --- | --- |
+| [`debugging`](plugins/engineering-practices/skills/debugging/SKILL.md) | Something is broken, failing, flaky or slow — build a red feedback loop first, then minimise, hypothesise, divide and conquer, and prove the fix by removing it (David Agans's nine rules, Andreas Zeller's systematic debugging). |
 
 ### Delivery & flow
 

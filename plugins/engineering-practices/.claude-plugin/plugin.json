@@ -1,6 +1,6 @@
 {
   "name": "engineering-practices",
-  "description": "Forty-five engineering-practice skills covering design, testing, refactoring, delivery, product, discovery, leadership, operating model & systems thinking, writing, and language-specific helpers — distilled from canonical software-craftsmanship books.",
+  "description": "Forty-six engineering-practice skills covering design, testing, refactoring, debugging, delivery, product, discovery, leadership, operating model & systems thinking, writing, and language-specific helpers — distilled from canonical software-craftsmanship books.",
   "author": {
     "name": "vnovakovits"
   }
