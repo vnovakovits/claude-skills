@@ -1,6 +1,6 @@
 ---
 name: systems-thinking-iceberg
-description: Apply the systems-thinking iceberg — events, patterns, systemic structures, mental models (and Daniel Kim's fifth level, vision) — to explain why a problem keeps happening and where to intervene. Draws on Peter Senge's The Fifth Discipline (levels of explanation, archetypes), Daniel Kim's Vision Deployment Matrix and archetype work, Donella Meadows' Thinking in Systems and twelve leverage points, Peter Stroh's Systems Thinking for Social Change, and Deming/Ackoff on the system producing the behaviour. Covers the questions and response mode at each level, causal loops and delays, the archetypes that most often sit under the waterline, mapping structures to Meadows' leverage points, and reviewing a proposed process, policy or fix by asking which level it acts on. Use for recurring incidents, a "people keep doing X" complaint, a retro or post-incident review, a ways-of-working or governance proposal, or before choosing a fix.
+description: Apply the systems-thinking iceberg — events, patterns, systemic structures, mental models (and Daniel Kim's fifth level, vision) — to explain why a problem keeps happening and where to intervene. Draws on Peter Senge's The Fifth Discipline (levels of explanation, archetypes), Daniel Kim's Vision Deployment Matrix and archetype work, Donella Meadows' Thinking in Systems and twelve leverage points, Peter Stroh's Systems Thinking for Social Change, and Deming/Ackoff on the system producing the behaviour. Covers the questions and response mode at each level, causal loops and delays, the archetypes that most often sit under the waterline, mapping structures to Meadows' leverage points, reviewing a proposed process, policy or fix by asking which level it acts on, and drawing the result as an iceberg with the findings inside each band. Use for recurring incidents, a "people keep doing X" complaint, a retro or post-incident review, a ways-of-working or governance proposal, or before choosing a fix.
 ---
 
 # Systems Thinking Iceberg
@@ -168,7 +168,18 @@ C --(+)--||--> D --(+)--> A          [R1: ..., delayed]
 **What we still don't know** — levels with weak evidence; how to find out.
 ```
 
-For a visual, an iceberg sketch (waterline between patterns and structures) or a causal loop diagram works; use the `artifact-diagramming` skill or Miro if available. Keep the text table as the source of truth.
+## Drawing the Iceberg — the Standard Output
+
+When the result goes anywhere people will look at it (an Artifact page, a Miro board, a slide, a PR or review write-up), the deliverable is a **drawn iceberg with the findings written inside it**. Two other formats don't count: a table with an iceberg picture next to it, and five stacked boxes. Use the template in `references/iceberg-drawing.md`, which is an inline SVG that uses theme tokens. Keep its shape and bands, and replace the points.
+
+- **Shape.** A real iceberg: a small tip above a dashed waterline, and a much larger mass below that widens with depth. The ice darkens band by band.
+- **Waterline under Events.** Only Events sit above it. Patterns sit just below unless someone already charts them. That position is a finding too: no one is watching the trend.
+- **Points inside the bands.** Each band has a centred header (the level, then its question) and the points for that level as short bullets. Name the group that holds each mental model as a bold key (`Board:`, `CTO:`). Split Vision into `Espoused:` and `In use:`.
+- **Frame in the margins.** Kim's response mode sits beside each band (React, Anticipate, Design, Reflect, Generate). A leverage arrow runs down the left side, from low leverage at the surface to high leverage at the base.
+- **Headlines in the drawing, detail in the findings.** Each band holds a fixed number of lines (the template gives the capacity). If a band overflows, shorten the points. Don't shrink the text.
+- **Below the drawing:** the archetype loops as chains (node → node → … ↻) and the Meadows leverage table, with each intervention marked as pushing in the right direction or the wrong one.
+
+In a terminal-only answer, use the text table above in place of the drawing. Its content is the same.
 
 ---
 
@@ -208,6 +219,7 @@ For a visual, an iceberg sketch (waterline between patterns and structures) or a
 - [ ] Is each intervention tagged with its level and Meadows leverage point?
 - [ ] Does each structural intervention carry a pattern-level prediction, an indicator and a review date?
 - [ ] Have I said what's already right at each level?
+- [ ] If the result will be viewed, is it a drawn iceberg with the points inside the bands (`references/iceberg-drawing.md`)?
 
 ---
 
