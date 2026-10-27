@@ -87,6 +87,7 @@ Examples:
 | "Why is this test brittle?" | `unit-testing-principles` |
 | "Set up a Kanban board." | `kanban`, often with `make-work-visible` |
 | "Review our change-request / prioritisation process." | `accidental-cio`, often with `flow-efficiency` and `kanban` |
+| "Why does this keep happening?" / "Will this new process actually fix it?" | `systems-thinking-iceberg`, often with `accidental-cio` |
 | "Model this domain." | `domain-driven-design`, sometimes `domain-modeling-made-functional` |
 
 If Claude isn't picking up the skill you want, just mention it by name — *"apply the `refactoring` skill to this method"* — and it will pull it in.
@@ -102,7 +103,7 @@ If Claude isn't picking up the skill you want, just mention it by name — *"app
 
 ## Disabling skills you don't want
 
-You don't have to take all 41.
+You don't have to take all 43.
 
 - **Plugin route:** open Claude Code's skill settings and toggle individual skills off.
 - **Copy route:** delete the unwanted folder from `~/.claude/skills/`.
@@ -179,6 +180,7 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | Skill | Apply when |
 | --- | --- |
 | [`accidental-cio`](plugins/engineering-practices/skills/accidental-cio/SKILL.md) | Designing or reviewing an IT operating model — intake/prioritisation/governance processes, funding models, decision rights, team structure, strategy-to-execution (Scott Millett; Cynefin, Wardley, Beyond Budgeting, Team Topologies). |
+| [`systems-thinking-iceberg`](plugins/engineering-practices/skills/systems-thinking-iceberg/SKILL.md) | Explaining why a problem keeps recurring and where to intervene — events, patterns, structures, mental models and vision; causal loops, archetypes, and Meadows' leverage points. Also for reviewing a process or fix by the level it acts on (Senge, Daniel Kim, Donella Meadows, Stroh). |
 
 ### Writing & communication
 

@@ -199,6 +199,7 @@ Walk the document against these questions. Each "no" is a finding.
 - **`ticket-writer`** — the intake artefact: problem-first, outcome-stated, no prescribed solution.
 - **`architecture-decision-records`** — recording the target-architecture and operating-model decisions Part III produces.
 - **`toyota-kata`** — the improvement engine for the operating model itself.
+- **`systems-thinking-iceberg`** — the Chapter 3 iceberg in full: why an operating-model defect produces the behaviour it does, and which level a proposed fix acts on.
 
 ---
 
