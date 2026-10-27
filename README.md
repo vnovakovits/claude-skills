@@ -86,6 +86,7 @@ Examples:
 | "Make this PR description shorter and clearer." | `elements-of-style` |
 | "Why is this test brittle?" | `unit-testing-principles` |
 | "Set up a Kanban board." | `kanban`, often with `make-work-visible` |
+| "Review our ways of working against lean / the Toyota Way." | `toyota-way`, often with `flow-efficiency` and `toyota-kata` |
 | "Review our change-request / prioritisation process." | `accidental-cio`, often with `flow-efficiency` and `kanban` |
 | "Why does this keep happening?" / "Will this new process actually fix it?" | `systems-thinking-iceberg`, often with `accidental-cio` |
 | "Model this domain." | `domain-driven-design`, sometimes `domain-modeling-made-functional` |
@@ -164,6 +165,7 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | [`product-development-flow`](plugins/engineering-practices/skills/product-development-flow/SKILL.md) | Don Reinertsen — cost of delay, WSJF, batch sizing, queueing theory for product work. |
 | [`make-work-visible`](plugins/engineering-practices/skills/make-work-visible/SKILL.md) | Surfacing invisible work, the Five Thieves of Time, Personal Kanban (Dominica DeGrandis). |
 | [`toyota-kata`](plugins/engineering-practices/skills/toyota-kata/SKILL.md) | Running improvement experiments via the Improvement Kata + Coaching Kata (Mike Rother). |
+| [`toyota-way`](plugins/engineering-practices/skills/toyota-way/SKILL.md) | Reviewing how work is managed against Jeffrey Liker's 14 principles — flow, pull, jidoka, standardised work, go and see, hansei and kaizen — plus the wastes in software terms and Toyota's chief-engineer and set-based product development. |
 
 ### Product
 
