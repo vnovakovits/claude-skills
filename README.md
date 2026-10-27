@@ -162,6 +162,7 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | [`kanban`](plugins/engineering-practices/skills/kanban/SKILL.md) | Setting up boards, WIP limits, flow metrics (Hammarberg & Sundén, Anderson, Leopold). |
 | [`lean-software-development`](plugins/engineering-practices/skills/lean-software-development/SKILL.md) | Mary & Tom Poppendieck's seven principles — eliminate waste, amplify learning, see the whole. |
 | [`flow-efficiency`](plugins/engineering-practices/skills/flow-efficiency/SKILL.md) | Diagnosing why "busy" doesn't equal "shipping" — Modig & Åhlström's flow-efficiency framework. |
+| [`value-stream-mapping`](plugins/engineering-practices/skills/value-stream-mapping/SKILL.md) | Mapping where a request waits from ask to value — Rother & Shook and Martin & Osterling, with lead time, process time, %C&A and a future state. Renders maps to SVG for documents and PDFs. |
 | [`product-development-flow`](plugins/engineering-practices/skills/product-development-flow/SKILL.md) | Don Reinertsen — cost of delay, WSJF, batch sizing, queueing theory for product work. |
 | [`make-work-visible`](plugins/engineering-practices/skills/make-work-visible/SKILL.md) | Surfacing invisible work, the Five Thieves of Time, Personal Kanban (Dominica DeGrandis). |
 | [`toyota-kata`](plugins/engineering-practices/skills/toyota-kata/SKILL.md) | Running improvement experiments via the Improvement Kata + Coaching Kata (Mike Rother). |
