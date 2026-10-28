@@ -77,7 +77,7 @@ Give the board link and one link per frame (`?moveToWidget=<frame id>`), then th
 ## Rules learned the hard way
 
 - **Big Picture means big.** About 15 events, 5 pivotal events, at most 6 hot spots, two lanes at most. Details belong in the process frames.
-- **External systems are pink stickies with name and role only** (for example "Pachira: payments"). No call/message/integration-type labels on EventStorming frames; that belongs on the coupling frames.
+- **External systems are pink stickies with name and role only** (for example "Payments: takes card payments"). No call/message/integration-type labels on EventStorming frames; that belongs on the coupling frames.
 - **One scope.** If the user names an API version, model only that version everywhere; legacy paths appear at most as a hot spot.
 - **Hot spots are specific, verified claims or questions**, placed on the sticky they are about: missing failure paths, silence checks ("what if X never answers?"), out-of-order messages, rules living in the wrong layer.
 - **Process grammar:** read model → actor → command → aggregate or system → event → policy → next command; every command has an issuer, every event a source; conditions are policies, never arrow labels.

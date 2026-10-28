@@ -1,11 +1,11 @@
 ---
 name: language-ext-csharp
-description: Apply the LanguageExt functional programming library for C# (LanguageExt 4.x — the `Aff<T>` / `Eff<T>` era, before LanguageExt 5's `K<F, A>` redesign). Covers the core types (`Option<T>`, `Either<L,R>`, `Validation<F,T>`, `Fin<T>`, `Aff<T>`, `Eff<T>`, `Seq<T>`, `Map<K,V>`, `Lst<T>`, `Set<T>`); idiomatic C# patterns for null-elimination, errors-as-values, applicative vs monadic composition, async effect chaining via LINQ-from, pattern matching with named arguments, the Prelude shortcut imports, and the railway-oriented programming style; common pitfalls (`ValueUnsafe`, mixing nulls with Option, calling `.Run()` on the wrong thread); and how LanguageExt's surface differs between v3 / v4 / v5. Use this skill when reading, writing, or reviewing C# code that uses LanguageExt — including any code touching `Option<>`, `Either<>`, `Validation<>`, `Aff<>`, `Eff<>`, `Seq<>`; when seeing `using static LanguageExt.Prelude;` in a file; when the code has `from … in … select …` over non-LINQ-collection types; when debugging async effects or composing repository calls; when a developer is new to LanguageExt and needs to know the idiomatic version of a familiar pattern (null-check, try/catch, Task<T>); when choosing between `Either` and `Validation` for error handling; when deciding whether to use `Match`, `Bind`, `Map`, or `Apply`. Complements `domain-modeling-made-functional` (DMMF is the design lens, this skill is the C#-specific mechanics) and `clean-code` (use both when refactoring imperative code into the functional style). Skip if the code does not import LanguageExt and you are not migrating it; skip for pure F# / Scala / Kotlin questions (LanguageExt is a C# library).
+description: Apply the LanguageExt functional library for C# in its 4.x form (the Aff and Eff era, before version 5's K<F, A> redesign). Covers the core types (Option, Either, Validation, Fin, Aff, Eff, Seq), idioms for null elimination, errors as values, applicative vs monadic composition, async effect chaining with LINQ from-select, Prelude imports and railway-oriented style, common pitfalls (ValueUnsafe, mixing nulls with Option, running effects on the wrong thread), and how v3, v4 and v5 differ. Use when reading, writing or reviewing C# that uses LanguageExt, including any code with Option<>, Either<>, Validation<>, Aff<>, Eff<> or Seq<>, `using static LanguageExt.Prelude`, or from-in-select over non-collection types, when composing repository effects or debugging async effects, when choosing between Either and Validation or between Match, Bind, Map and Apply, or when translating a null check, try/catch or Task into the idiomatic form. Skip if the code does not use LanguageExt.
 ---
 
 # LanguageExt in C# (4.x)
 
-LanguageExt brings functional types to C#. Olive uses it extensively to encode nulls (`Option<T>`), error tracks (`Either<L,R>`, `Validation<F,T>`), async effects (`Aff<T>`), and immutable collections (`Seq<T>`). This skill captures the mechanical idioms — what to import, what to write, what to avoid — for the LanguageExt 4.x era.
+LanguageExt brings functional types to C#. Codebases that adopt it use it to encode nulls (`Option<T>`), error tracks (`Either<L,R>`, `Validation<F,T>`), async effects (`Aff<T>`), and immutable collections (`Seq<T>`). This skill captures the mechanical idioms — what to import, what to write, what to avoid — for the LanguageExt 4.x era.
 
 Version note: this skill targets **LanguageExt 4.x**, where async effects are `Aff<T>` and sync effects are `Eff<T>`. LanguageExt 5 reworks the abstraction into `K<F, A>` and renames much of the surface; the conceptual model carries over but the syntax doesn't. If a file you're looking at uses `Aff` / `Eff` / `Prelude.SuccessAff`, you're on 4.x and this skill applies directly.
 
@@ -91,8 +91,8 @@ Aff<Customer> getCustomer = customerRepository.Read(id);   // returns Aff<Custom
 
 Aff<Seq<IEvent>> workflow =
     from id     in Parser.Parse(rawId).ToAff(Error.Many)
-    from state  in shipmentRepository.Read(id).ToAff()
-    from events in shipmentRepository.UpdateAff(id, s => DraftShipment.Foo(s))
+    from state  in orderRepository.Read(id).ToAff()
+    from events in orderRepository.UpdateAff(id, s => Order.Foo(s))
     select events;
 
 Fin<Seq<IEvent>> result = await workflow.Run();
@@ -151,10 +151,10 @@ var fullAddress =
     from country in Optional(maybeCountry)
     select $"{street}, {city}, {country}";   // Option<string>; None if any is None
 
-// Aff (Olive's most common shape)
+// Aff (the most common shape in repository code)
 var workflow =
     from id     in Parser.Parse(rawId).ToAff(Error.Many)
-    from state  in shipmentRepository.Read(id).ToAff()
+    from state  in orderRepository.Read(id).ToAff()
     from events in shipmentRepository.UpdateAff(id, ApplyDomainOp)
     from _      in eventPublisher.Publish(events).ToUnit().ToAff()
     select events;
@@ -276,9 +276,9 @@ Seq<int> validIds = ids.Map(ParseInt).Somes();   // Seq<Option<int>>.Somes() -> 
 
 `.Somes()` collapses an `IEnumerable<Option<T>>` into the `T` values where present. Useful idiom.
 
-## The "Execute" pattern (Olive-specific)
+## A project-level helper: "Execute"
 
-Olive has a recurring pattern for validating domain operations:
+A helper some codebases add for validating domain operations:
 
 ```csharp
 state.Execute(
@@ -287,7 +287,7 @@ state.Execute(
     rejectionAction: (reasons, codes) => Seq<IEvent>(new SomethingRejected(reasons, codes)));
 ```
 
-This is `state.Execute` from `StateExtensions` — it runs the guard, and if validation passes calls `domainAction`; otherwise calls `rejectionAction` with the accumulated reasons and outcome codes. It's a thin wrapper over `Validation<Error, Unit>.Match` that returns the right event sequence.
+Here `state.Execute` is a project helper, not part of LanguageExt — it runs the guard, and if validation passes calls `domainAction`; otherwise calls `rejectionAction` with the accumulated reasons and outcome codes. It's a thin wrapper over `Validation<Error, Unit>.Match` that returns the right event sequence.
 
 Use it when a domain operation has both a success event and a rejection event with the same outcome shape.
 

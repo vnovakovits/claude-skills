@@ -1,6 +1,6 @@
 ---
 name: observability
-description: Apply modern observability practices from Charity Majors / Liz Fong-Jones / George Miranda's "Observability Engineering" (O'Reilly), Charity Majors' recent Observability 2.0 writing (charity.wtf & honeycomb.io, 2024-2025 — one source of truth via arbitrarily-wide structured events, aggregate at read time, observability-driven development), Cindy Sridharan's essays, Google's SRE books, and the OpenTelemetry standard. Covers observability vs. monitoring, Observability 1.0 vs 2.0, wide/canonical high-cardinality structured events, the three signals (traces/metrics/logs) with OpenTelemetry semantic conventions + context propagation, metrics (RED, USE, Four Golden Signals), distributed tracing, sampling, SLO/SLI/error-budget discipline, observability-driven development, symptom-based alerting, and what to instrument vs what's noise. Use when adding instrumentation to new code, deciding what to log/measure/trace, structuring log events, choosing metric labels vs trace/event attributes, debugging a production issue, setting up SLOs, or evaluating whether code is actually observable.
+description: Apply modern observability practices from Charity Majors / Liz Fong-Jones / George Miranda's "Observability Engineering" (O'Reilly), Charity Majors' recent Observability 2.0 writing (2024-2025), Cindy Sridharan's essays, Google's SRE books, and the OpenTelemetry standard. Covers observability vs. monitoring, Observability 1.0 vs 2.0, wide/canonical high-cardinality structured events, the three signals (traces/metrics/logs) with OpenTelemetry semantic conventions + context propagation, metrics (RED, USE, Four Golden Signals), distributed tracing, sampling, SLO/SLI/error-budget discipline, observability-driven development, symptom-based alerting, and what to instrument vs what's noise. Use when adding instrumentation to new code, deciding what to log/measure/trace, structuring log events, choosing metric labels vs trace/event attributes, debugging a production issue, setting up SLOs, or evaluating whether code is actually observable.
 ---
 
 # Observability
@@ -302,7 +302,7 @@ The argument from Honeycomb / Charity Majors: store one event per unit of work, 
 ```json
 {
   "timestamp": "2026-05-11T14:32:01Z",
-  "service": "cedar-api",
+  "service": "pricing-api",
   "operation": "POST /v1/markups/calculate",
   "duration_ms": 87,
   "status_code": 200,

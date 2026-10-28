@@ -111,7 +111,7 @@ The name reads as a sentence and is a *micro-specification*. When it fails in th
 
 **Reading the segments back against the unit-of-work model:** the third segment names which *exit point* you're verifying. `ReducesBalanceByAmount` → state change. `ThrowsInsufficientFunds` / `ReturnsTheirSum` → return value (or exception). `CallsWebServiceWithError` → call to a third-party (so this test, and only this test, will need a mock).
 
-> This project's convention is the structurally identical `State_Trigger_Outcome` for aggregate tests, mirroring the `Fixture.Given(state).When(trigger).Then(outcome)` chain and the domain `Handle(trigger, state) → events` signature (see `Acacia.Test.Unit/.../CancelShipmentTests.cs` and the `test-data-patterns` skill). Same three-part spirit, project-local order.
+> Some event-sourced projects use the structurally identical `State_Trigger_Outcome` for aggregate tests, mirroring the `Fixture.Given(state).When(trigger).Then(outcome)` chain and the domain `Handle(trigger, state) → events` signature (see the `test-data-patterns` skill). Same three-part spirit, project-local order.
 
 > **Where Osherove differs:** Khorikov *softened* on naming in later writing (preferring plain English sentences over the rigid three-underscore form), and Meszaros speaks of names that "state the behavior." Osherove is the one who **codified the strict three-part underscore convention** — it is *his* signature. When the team wants a single mechanical rule that any developer applies the same way, this is it.
 
@@ -293,7 +293,7 @@ public void IsValidLogFileName_VariousNames_ReturnsExpected(string name, bool ex
 A test suite is only an asset if the team *believes* it. Erosion of trust is how good suites die.
 
 - **No flaky / erratic tests in the unit suite.** A test that passes sometimes trains everyone to ignore red. Find the cause (shared state, uncontrolled time/RNG, ordering, real I/O) and fix it or move the test to the integration suite.
-- **Separate unit tests from integration tests** — different projects/folders/CI stages. The unit suite must be *all green, all fast, all the time*; mixing in slow/occasionally-red integration tests destroys that guarantee. (Acacia already splits these: `Acacia.Test.Unit` vs `Acacia.Test.Integration` / `Acacia.Test.Docker`.)
+- **Separate unit tests from integration tests** — different projects/folders/CI stages. The unit suite must be *all green, all fast, all the time*; mixing in slow/occasionally-red integration tests destroys that guarantee. (For example, separate `*.Test.Unit`, `*.Test.Integration` and `*.Test.Docker` projects.)
 - **Never comment out or `Skip` a failing test silently.** Either fix it, or delete it with a tracked follow-up. A disabled test is invisible rot.
 - **Tests must be independent** — any order, any subset, no shared mutable state. A test that only passes after another ran is not trustworthy.
 - **A test that has never been seen to fail proves nothing.** Make a new test fail first (wrong assertion, or red before the code exists) so you know it can.
