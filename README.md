@@ -104,7 +104,7 @@ If Claude isn't picking up the skill you want, just mention it by name — *"app
 
 ## Disabling skills you don't want
 
-You don't have to take all 52.
+You don't have to take all 53.
 
 - **Plugin route:** open Claude Code's skill settings and toggle individual skills off.
 - **Copy route:** delete the unwanted folder from `~/.claude/skills/`.
@@ -209,6 +209,12 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | Skill | Apply when |
 | --- | --- |
 | [`elements-of-style`](plugins/engineering-practices/skills/elements-of-style/SKILL.md) | Drafting, tightening, or proofreading any prose — PR descriptions, docs, ADRs, tickets, emails, UI copy, error messages — with Strunk's rules: active voice, positive form, concrete language, omit needless words (William Strunk Jr., E. B. White). |
+
+### Learning
+
+| Skill | Apply when |
+| --- | --- |
+| [`teaching`](plugins/engineering-practices/skills/teaching/SKILL.md) | Learning a concept, library, technique or codebase so it sticks — retrieval practice, spaced and interleaved review, worked examples that fade into problems, checks by prediction and explanation, and a learning plan and review queue kept across sessions (Make It Stick, Bjork, Sweller, Hermans's The Programmer's Brain). |
 
 ### Working with coding agents
 
