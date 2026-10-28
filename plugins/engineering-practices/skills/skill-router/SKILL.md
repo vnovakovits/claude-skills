@@ -71,6 +71,10 @@ Apply this skill when it is not obvious which practice fits, or when a piece of 
 
 `elements-of-style` for any prose: PR descriptions, ADRs, tickets, docs, messages. `pr-writer`, `ticket-writer` and `architecture-decision-records` for the structure of those specific documents.
 
+### Learning
+
+`teaching` to learn a concept, library, technique or codebase over one or many sessions. Any book-based skill here can be its syllabus; for a new codebase, `service-atlas` or `event-storming` makes a good first map.
+
 ---
 
 ## Telling overlapping skills apart
@@ -86,6 +90,7 @@ Apply this skill when it is not obvious which practice fits, or when a piece of 
 | `splitting-user-stories` / `to-tickets` | cutting one story thinner | planning a whole piece of work as a dependency graph |
 | `ticket-writer` / `to-tickets` | writing one ticket well | breaking work into many tickets with blockers |
 | `grilling` / `example-mapping` | open decisions across a plan or design | the rules of one story |
+| `grilling` / `teaching` | sharpening the user's own decisions | building the user's understanding of something |
 | `two-axis-code-review` / `pr-writer` | reviewing someone's change | presenting your own |
 | `debugging` / `working-effectively-with-legacy-code` | something is broken and you need the cause | the code works but must change and has no tests |
 | `philosophy-of-software-design` / `fractal-architecture` | the cost of an interface relative to what it hides | whether a unit fits in working memory |

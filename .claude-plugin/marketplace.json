@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "engineering-practices",
-      "description": "Fifty-two engineering-practice skills covering design (Clean Code, SOLID, CUPID, Ousterhout's deep modules, DDD, Hexagonal Architecture), testing (TDD, BDD, Khorikov's unit-testing principles), refactoring (Fowler, Kerievsky, Tidy First, Feathers), debugging (Agans, Zeller), delivery (CD, Kanban, Lean, Flow, Value Stream Mapping, the Toyota Way, two-axis code review), product (Running Lean, Story Splitting, Example Mapping, Ticket Writing, grilling, tracer-bullet tickets), leadership & operating model (The Accidental CIO, the systems-thinking iceberg), writing (Strunk's Elements of Style), working with coding agents (session retrospectives), language-specific helpers (LanguageExt for C#), and a router that maps situations to skills.",
+      "description": "Fifty-three engineering-practice skills covering design (Clean Code, SOLID, CUPID, Ousterhout's deep modules, DDD, Hexagonal Architecture), testing (TDD, BDD, Khorikov's unit-testing principles), refactoring (Fowler, Kerievsky, Tidy First, Feathers), debugging (Agans, Zeller), delivery (CD, Kanban, Lean, Flow, Value Stream Mapping, the Toyota Way, two-axis code review), product (Running Lean, Story Splitting, Example Mapping, Ticket Writing, grilling, tracer-bullet tickets), leadership & operating model (The Accidental CIO, the systems-thinking iceberg), writing (Strunk's Elements of Style), learning (evidence-based teaching), working with coding agents (session retrospectives), language-specific helpers (LanguageExt for C#), and a router that maps situations to skills.",
       "author": {
         "name": "vnovakovits"
       },
