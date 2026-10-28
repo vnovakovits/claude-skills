@@ -225,7 +225,7 @@ Reviewing a change:
 ## Reading
 
 - **John Ousterhout**, *A Philosophy of Software Design* (Yaknyam Press, 2018; 2nd ed. 2021) — the reference for this skill. Short, opinionated, and grounded in his Stanford CS 190 course.
-- **John Ousterhout & Robert C. Martin**, *A Philosophy of Software Design vs Clean Code* (github.com/johnousterhout/aposd-vs-clean-code) — a written debate on method length, comments and TDD.
+- **John Ousterhout & Robert C. Martin**, *A Philosophy of Software Design vs Clean Code* (github.com/johnousterhout/aposd-vs-clean-code, 2024) — a written debate on method length, comments and TDD, with each author's rewrite of the same example.
 - **David Parnas**, "On the Criteria To Be Used in Decomposing Systems into Modules" (CACM, 1972) — the origin of information hiding, and the first case against decomposing by processing steps.
 - **Matt Pocock**, `codebase-design` skill (github.com/mattpocock/skills) — depth as leverage, the deletion test, and the two-adapter rule for seams.
 - **Michael Feathers**, *Working Effectively with Legacy Code* (2004) — the origin of the *seam* concept.
