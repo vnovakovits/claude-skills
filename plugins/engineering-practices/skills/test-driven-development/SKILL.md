@@ -244,6 +244,8 @@ Before writing any test, write a list of all the tests you think you'll need for
 
 The list externalizes working memory and prevents "what was I trying to do?" loss during a long session. It is private — throw it away when the feature is done.
 
+**Agree where the tests attach before writing them.** Next to the list, write down the seams the tests will go through — the public interfaces where behaviour is observed — with a line on what each catches and misses, and confirm them with whoever owns the design. Prefer the highest seam that still runs fast. Tests at seams nobody agreed tend to land on internals, and then the refactor step breaks them.
+
 ---
 
 ## Refactoring Discipline
@@ -353,6 +355,7 @@ Capture the current output of code as the "approved" output; future runs compare
 - **Brittle setup.** Tests with 50 lines of setup are unmaintainable. Refactor the design or the test helpers.
 - **Forgetting acceptance tests.** Unit tests alone don't prove the system works.
 - **Tests that never fail.** A test that has never failed has not been verified to test anything. Make it fail first.
+- **Tautological tests.** The expected value is computed the way the code computes it (`Add(a, b).Should().Be(a + b)`, a snapshot regenerated from the output, a constant asserted equal to itself), so the test passes by construction and can never disagree with the code. Take expected values from an independent source: a literal worked out by hand, an example from the spec, a known-good result.
 - **Slow test suites.** A multi-minute suite stops being run; tests stop being trusted. Optimize ruthlessly.
 - **Test code worse than production code.** Test code IS code. Refactor it; name it; structure it.
 

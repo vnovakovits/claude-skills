@@ -104,6 +104,14 @@ The history is the point. "We chose X in 2024 because Y, then in 2026 we replace
 
 The hard question. Most decisions don't warrant one; some that do don't get written.
 
+**The three-condition test** (from Matt Pocock's `domain-modeling` skill). Write an ADR only when all three hold:
+
+1. **Hard to reverse** — changing your mind later costs something real.
+2. **Surprising without context** — a future reader would ask "why on earth did they do it this way?"
+3. **The result of a real trade-off** — there were genuine alternatives, and one was chosen for specific reasons.
+
+If any is missing, skip the ADR: an easily reversed choice can just be changed, an obvious one needs no defence, and a choice with no alternative is not a decision. The heuristics below are examples of decisions that usually pass or fail the test.
+
 Heuristics:
 
 **Worth an ADR:**
