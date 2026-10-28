@@ -23,20 +23,20 @@ Apply this skill when test setup is starting to dominate test bodies, when an ob
 
 A fluent class whose only job is constructing one type of domain object. Sensible defaults; `WithX` methods for the dimensions that vary; a terminal `Build()` that returns the constructed object.
 
-### Canonical form (matches `OliveV3ShipmentBuilder`)
+### Canonical form (matches `OrderBuilder`)
 
 ```csharp
-public sealed class OliveV3ShipmentBuilder
+public sealed class OrderBuilder
 {
     private Guid id = Guid.NewGuid();
     private decimal totalPriceExVat = 10m;
     private bool isPaid = true;
     // ... sensible defaults for every field
 
-    public OliveV3ShipmentBuilder WithId(Guid value) { id = value; return this; }
-    public OliveV3ShipmentBuilder WithTotalPriceExVat(decimal value) { totalPriceExVat = value; return this; }
+    public OrderBuilder WithId(Guid value) { id = value; return this; }
+    public OrderBuilder WithTotalPriceExVat(decimal value) { totalPriceExVat = value; return this; }
 
-    public IOliveServiceV3.Shipment Build() => new(/* ... */);
+    public Order Build() => new(/* ... */);
 }
 ```
 
@@ -52,9 +52,9 @@ When the same setter is invoked with the same value across many tests, name the 
 
 ```csharp
 // Less clear
-builder.WithStatus(IOrchidService.CollectionResponse.Statuses.Scheduled)
+builder.WithStatus(DeliveryStatus.Scheduled)
 
-// Clearer (matches OrchidCollectionBuilder)
+// Clearer (matches DeliveryBuilder)
 builder.IsScheduled()
 builder.IsBooked()
 builder.IsCancelled()
@@ -70,7 +70,7 @@ A semantic method is just a `WithX(specific value)` with a name that reads like 
 When one logical state requires changing several fields together, encapsulate the coordination in the builder, not in every test:
 
 ```csharp
-public OliveV3ShipmentBuilder IsDropOff()
+public OrderBuilder IsDropOff()
 {
     isDropOff = true;
     isCollection = false;   // mutually exclusive — builder enforces it
@@ -106,7 +106,7 @@ public class Builders
     public static NewCollectionRequestedBuilder NewCollectionRequested(Guid shipment, Guid threePl) =>
         new(shipment, threePl);
 
-    public static OrchidNewCollectionRequestBuilder OrchidRebookRequest(Guid shipment) =>
+    public static DeliveryRequestBuilder RebookRequest(Guid shipment) =>
         new(shipment);
 }
 ```
@@ -125,7 +125,7 @@ A *pure* Object Mother returns a fully constructed object — but then varying i
 
 The combination resolves both: **the Mother method takes the few identifying inputs the scenario must supply** (the shipment ID, the customer ID), **returns a pre-configured Builder**, and the test fluently varies whatever else it cares about.
 
-This is how the Acacia codebase uses them, and it's the recommended default.
+This is how mature event-sourced codebases typically use them, and it's the recommended default.
 
 ### When to add a Mother method
 
@@ -181,9 +181,9 @@ The semantic alternative to AAA, from BDD. The phases align with AAA but the *na
 GWT is preferable when:
 - The test is verifying *domain behavior* (state transition, business rule) rather than a code-level mechanic.
 - The scenario benefits from being readable by a non-developer.
-- The codebase is already event-sourced or behavior-oriented (Acacia: yes).
+- The codebase is already event-sourced or behavior-oriented.
 
-AAA and GWT are not in conflict — many teams write GWT-named tests with an AAA internal structure. The Acacia codebase uses a chained Fixture that *enforces* GWT structure, which is the next pattern.
+AAA and GWT are not in conflict — many teams write GWT-named tests with an AAA internal structure. Some codebases use a chained Fixture that *enforces* GWT structure, which is the next pattern.
 
 ---
 
@@ -191,18 +191,18 @@ AAA and GWT are not in conflict — many teams write GWT-named tests with an AAA
 
 A fixture object whose API is the GWT phases themselves. Tests cannot accidentally drift out of the structure.
 
-### Canonical form (Acacia style)
+### Canonical form (chained-fixture style)
 
 ```csharp
 [Fact]
-public void StatusIsActiveShipment_CancelShipmentConsumed_DraftShipmentCancellationRequestedRaised()
+public void StatusIsActiveOrder_CancelOrderConsumed_OrderCancellationRequestedRaised()
 {
     var shipmentId = Guid.NewGuid();
     Fixture
         .Given(new HoldCancelShipmentStateTest {
             ShipmentId = shipmentId,
             ProcessState = ProcessState.ActiveShipment,
-            ThreePlId = "PH"
+            SalesChannel = "WEB"
         })
         .When(new Commands.CancelShipment(Guid.NewGuid(), Guid.NewGuid(), shipmentId))
         .Then((result, message, _) =>
@@ -220,14 +220,14 @@ public void StatusIsActiveShipment_CancelShipmentConsumed_DraftShipmentCancellat
 - The `Then` slot inspects the produced events.
 - The test name mirrors the same `State_Trigger_Outcome` shape — a third instance of the same pattern.
 
-This triple alignment (test name ↔ fixture chain ↔ domain logic signature) is why the pattern fits Acacia so well.
+This triple alignment (test name ↔ fixture chain ↔ domain logic signature) is why the pattern fits event-sourced domains so well.
 
 ### When to use a chained fixture vs plain AAA
 
 Use a chained fixture when:
 - The system under test is a state machine, aggregate, or event handler — anything that takes (state, trigger) → (new events / new state).
 - You want the suite to enforce structural consistency across many tests.
-- The domain is being modeled in DDD style (Acacia).
+- The domain is being modeled in DDD style.
 
 Don't use one when:
 - The unit under test is a pure function or a small algorithm — AAA is lighter.
@@ -245,14 +245,14 @@ A class whose responsibility is setting up the **entire test world for one handl
 
 Where a Builder constructs *one object*, an Arrangement wires together the *whole Arrange phase* of a test — including multiple fakes that must share the same IDs.
 
-### Canonical form (matches `CopyDraftShipmentArrangement`)
+### Canonical form (matches `CopyDraftOrderArrangement`)
 
 ```csharp
-public sealed class CopyDraftShipmentArrangement
+public sealed class CopyDraftOrderArrangement
 {
     // Test-owned IDs — all downstream usage references these, not inline Guid.NewGuid()
     public Guid SourceDraftId { get; } = Guid.NewGuid();
-    public Guid NewShipmentId { get; } = Guid.NewGuid();
+    public Guid NewOrderId { get; } = Guid.NewGuid();
     public Guid CustomerId    { get; }
 
     // Shared field constants — seeding methods write them; assertions read them
@@ -260,23 +260,23 @@ public sealed class CopyDraftShipmentArrangement
     public const string ShipperEmail   = "alice.shipper@example.com";
     // ... one const per copyable source field
 
-    private readonly TestCopyDraftShipmentRepository _copyRepo;
-    private readonly TestDraftShipmentQuotesRepository _quotesRepo;
+    private readonly TestCopyDraftOrderRepository _copyRepo;
+    private readonly TestDraftOrderPricesRepository _quotesRepo;
 
-    public CopyDraftShipmentArrangement(
+    public CopyDraftOrderArrangement(
         Guid customerId,
-        TestCopyDraftShipmentRepository copyRepo,
-        TestDraftShipmentQuotesRepository quotesRepo)
+        TestCopyDraftOrderRepository copyRepo,
+        TestDraftOrderPricesRepository quotesRepo)
     { ... }
 
     // The Arrange-phase entry point for every test
-    public CopyDraftShipmentCommand Command =>
-        new(SourceDraftId, NewShipmentId, CustomerId, _itineraryId, []);
+    public CopyDraftOrderCommand Command =>
+        new(SourceDraftId, NewOrderId, CustomerId, _itineraryId, []);
 
     // Fluent seeding — each method seeds one aspect into the fakes and returns this
-    public CopyDraftShipmentArrangement WithCollectionSource() { _copyRepo.Given(...); return this; }
-    public CopyDraftShipmentArrangement WithShipperDetails()   { _copyRepo.Given(...); return this; }
-    public CopyDraftShipmentArrangement WithNotes()            { _copyRepo.Given(...); return this; }
+    public CopyDraftOrderArrangement WithCollectionSource() { _copyRepo.Given(...); return this; }
+    public CopyDraftOrderArrangement WithShipperDetails()   { _copyRepo.Given(...); return this; }
+    public CopyDraftOrderArrangement WithNotes()            { _copyRepo.Given(...); return this; }
     // ...
 }
 ```
@@ -299,8 +299,8 @@ public async Task Copy_FullyPopulatedSource_EmitsPerFieldEventsOnNewDraft()
 
     result.IsSucc.Should().BeTrue();
     var shipper = v3Repository.RaisedEvents.OfType<ShipperDetailsAdded>()
-                              .Single(e => e.DraftShipmentId == arrangement.NewShipmentId);
-    shipper.Name.Should().Be(CopyDraftShipmentArrangement.ShipperName);
+                              .Single(e => e.DraftOrderId == arrangement.NewOrderId);
+    shipper.Name.Should().Be(CopyDraftOrderArrangement.ShipperName);
 }
 ```
 
@@ -340,7 +340,7 @@ A Chained Fixture (`Fixture.Given().When().Then()`) enforces Given-When-Then *st
 
 ---
 
-## How the patterns combine — the canonical Acacia stack
+## How the patterns combine — a canonical stack
 
 ```csharp
 [Fact]
@@ -432,24 +432,26 @@ Builders construct data. They don't validate, normalize, or compute derived valu
 
 ---
 
-## Codebase-specific conventions
+## Example house conventions
 
-### Acacia
+Two sets of conventions from real codebases, with the names changed. Adapt them rather than copy them.
 
-- **Builders live in `Acacia.Test.Unit/Builders/`** for shared types, or `Acacia.Test.Unit/<Aggregate>/Builders/` for aggregate-specific types.
+### An event-sourced service with a chained Fixture
+
+- **Builders live in `Billing.Test.Unit/Builders/`** for shared types, or `Billing.Test.Unit/<Aggregate>/Builders/` for aggregate-specific types.
 - **Builders are `sealed`** unless there's a reason to inherit.
 - **Static `Builders` Mother class** sits inside the relevant subfolder, exposing factory methods that return aggregate-specific builders.
-- **Test naming follows `State_Trigger_Outcome`** (e.g. `StatusIsActiveShipment_CancelShipmentConsumed_DraftShipmentCancellationRequestedRaised`) — same shape as the chained Fixture.
+- **Test naming follows `State_Trigger_Outcome`** (e.g. `StatusIsActiveOrder_CancelOrderConsumed_OrderCancellationRequestedRaised`) — same shape as the chained Fixture.
 - **Comments belong in tests, not production code** — explanatory comments on regression tests are encouraged.
 - **FluentAssertions** for assertions; `BeEquivalentTo` / `ContainEquivalentOf` with `Excluding` and custom `Using<DateTime>` comparators for time tolerance.
-- **Reqnroll (BDD)** lives in `Acacia.Test.Behavior` — different layer; the chained Fixture is for unit-level GWT, Reqnroll is for feature-level GWT.
+- **Reqnroll (BDD)** lives in `Billing.Test.Behavior` — different layer; the chained Fixture is for unit-level GWT, Reqnroll is for feature-level GWT.
 
-### Olive
+### A command-handler service with Arrangements
 
-- **Arrangements live in `Olive.Test.Unit/V3/<Feature>/TestHelpers/`** alongside the other test helpers for that feature (e.g. `CopyDraftShipmentArrangement` sits next to `TestCopyDraftShipmentRepository`).
+- **Arrangements live in `Ordering.Test.Unit/<Feature>/TestHelpers/`** alongside the other test helpers for that feature (e.g. `CopyDraftOrderArrangement` sits next to `TestCopyDraftOrderRepository`).
 - **Arrangements are `sealed`** with a constructor that takes the customer ID and the relevant fake repositories.
-- **A factory helper on the test class** (`private CopyDraftShipmentArrangement Arrange() => new(OwnerCustomerId, copyRepository, quotesRepository)`) keeps test bodies from repeating the constructor arguments.
-- **Constants for source field values** live as `public const` on the Arrangement — seeding methods write them; assertion lambdas read them by name (e.g. `CopyDraftShipmentArrangement.ShipperName`).
+- **A factory helper on the test class** (`private CopyDraftOrderArrangement Arrange() => new(OwnerCustomerId, copyRepository, quotesRepository)`) keeps test bodies from repeating the constructor arguments.
+- **Constants for source field values** live as `public const` on the Arrangement — seeding methods write them; assertion lambdas read them by name (e.g. `CopyDraftOrderArrangement.ShipperName`).
 - **Per-test command overrides** use C# record `with` on `arrangement.Command`, not a new `With*` method.
 - **Arrangements suit command-handler tests** where the handler takes a primitive-shaped command and multiple fake repositories must share the same IDs.
 - **Domain-function tests** (pure functions, no fakes) don't need Arrangements — use direct construction with named arguments or a Builder.

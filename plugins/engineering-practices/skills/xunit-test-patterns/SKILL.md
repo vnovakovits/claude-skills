@@ -1,6 +1,6 @@
 ---
 name: xunit-test-patterns
-description: Apply Gerard Meszaros's "xUnit Test Patterns: Refactoring Test Code" (2007) — the canonical catalogue of test-automation patterns, the test-double taxonomy (Dummy, Stub, Spy, Mock, Fake), test smells, fixture strategies, and result-verification patterns. Use when writing or refactoring test code; diagnosing brittle, slow, erratic, or obscure tests; choosing and naming a test double; designing fixtures (fresh vs shared, Object Mother, Test Data Builder, setup styles); structuring the four-phase test; deciding where to draw the test boundary (subcutaneous / layer / round-trip); faking out-of-process dependencies (in-memory fake database, back-door manipulation); or rescuing a test suite that has become a maintenance burden. Complements test-driven-development (the workflow), unit-testing-principles (what makes a test good), and test-data-patterns (builders and mothers).
+description: Apply Gerard Meszaros's "xUnit Test Patterns — Refactoring Test Code" (2007) — the canonical catalogue of test-automation patterns, the test-double taxonomy (Dummy, Stub, Spy, Mock, Fake), test smells, fixture strategies, and result-verification patterns. Use when writing or refactoring test code; diagnosing brittle, slow, erratic, or obscure tests; choosing and naming a test double; designing fixtures (fresh vs shared, Object Mother, Test Data Builder, setup styles); structuring the four-phase test; deciding where to draw the test boundary (subcutaneous / layer / round-trip); faking out-of-process dependencies (in-memory fake database, back-door manipulation); or rescuing a test suite that has become a maintenance burden. Complements test-driven-development (the workflow), unit-testing-principles (what makes a test good), and test-data-patterns (builders and mothers).
 ---
 
 # xUnit Test Patterns (Gerard Meszaros)
@@ -56,7 +56,7 @@ This is the structural sibling of Arrange-Act-Assert / Given-When-Then. The key 
 
 Sharper distinctions Meszaros draws:
 - **Stub vs Mock** (the Fowler "Mocks Aren't Stubs" line): a **Stub** provides *indirect input* — you ask it for data. A **Mock** verifies *indirect output* — you check that the SUT sent it the right message. Stubs answer queries; mocks confirm commands. (`unit-testing-principles` sharpens this with managed/unmanaged dependencies.)
-- **Configurable vs Hard-Coded Test Double** — a Hard-Coded double has its behaviour baked in (a hand-written `FakeOliveServiceV3`); a Configurable double is set up per-test (Moq's `Setup(...).Returns(...)`). Hard-coded doubles read cleanly and are reusable; configurable doubles are flexible but verbose. Prefer hand-rolled fakes for collaborators reused across many tests; configurable mocks for one-off interaction checks.
+- **Configurable vs Hard-Coded Test Double** — a Hard-Coded double has its behaviour baked in (a hand-written `FakeOrderService`); a Configurable double is set up per-test (Moq's `Setup(...).Returns(...)`). Hard-coded doubles read cleanly and are reusable; configurable doubles are flexible but verbose. Prefer hand-rolled fakes for collaborators reused across many tests; configurable mocks for one-off interaction checks.
 - A **Saboteur** is a stub that throws, to exercise error paths. A **Responder** is the happy-path stub.
 
 **Don't double what you don't own** — wrap a third-party API in your own interface and double the wrapper.
@@ -82,7 +82,7 @@ The **fixture** is everything you build before exercising the SUT. The central t
 - **Parameterized / Anonymous Creation Method** — generate distinct, irrelevant values so the reader knows "the specific value doesn't matter."
 - **Automated Teardown** — track what was created and tear it down generically, rather than fragile hand-written teardown.
 
-> This project's stack is **chained Fixture + Object Mother + Test Data Builder** — see the `test-data-patterns` skill and `Acacia.Test.Unit/.../Builders/`.
+> A common stack is **chained Fixture + Object Mother + Test Data Builder** — see the `test-data-patterns` skill.
 
 ---
 
@@ -103,7 +103,7 @@ Avoid **Assertion Roulette**: many bare asserts with no messages, so a failure d
 
 ## Out-of-Process Dependencies (Databases, Services, Files)
 
-- **Back Door Manipulation** — set up or verify state through a *back door* (direct DB write/read) rather than the SUT's front door. *Back Door Setup* seeds preconditions; *Back Door Verification* confirms a persisted side effect. (Acacia's acceptance tests seed EventStore directly — back-door setup.)
+- **Back Door Manipulation** — set up or verify state through a *back door* (direct DB write/read) rather than the SUT's front door. *Back Door Setup* seeds preconditions; *Back Door Verification* confirms a persisted side effect. (Acceptance tests that seed the event store directly — back-door setup.)
 - **Database Sandbox** — every developer/run gets an isolated database, so tests never collide. (Testcontainers gives a per-run sandbox.)
 - **Table Truncation Teardown** / **Transaction Rollback Teardown** — reset persistent state between tests cheaply.
 - **Fake Database** — an in-memory implementation of the repository/persistence seam, for *fast* tests that still cross the persistence boundary logically. The single highest-leverage pattern for turning slow integration tests into fast ones — when the persistence abstraction is fakeable.

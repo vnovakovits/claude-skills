@@ -71,7 +71,7 @@ At process level, hot spots stop being only "we disagree" and become concrete en
 - a confirmation that means nothing
 - a contract that can't evolve
 
-Write them as a **claim or a question, verbatim and specific** ("if Orchid has no consumer for this, the cancel is silently lost"), place them **on the exact sticky they're about**, and leave them visible. A process model whose hot spots were quietly resolved by the modeler is a fiction. Hot spots are the input to the next tickets.
+Write them as a **claim or a question, verbatim and specific** ("if the fulfilment service has no consumer for this, the cancel is silently lost"), place them **on the exact sticky they're about**, and leave them visible. A process model whose hot spots were quietly resolved by the modeler is a fiction. Hot spots are the input to the next tickets.
 
 ## Remote Boards (Miro / Mural / FigJam)
 
