@@ -104,7 +104,7 @@ If Claude isn't picking up the skill you want, just mention it by name — *"app
 
 ## Disabling skills you don't want
 
-You don't have to take all 48.
+You don't have to take all 52.
 
 - **Plugin route:** open Claude Code's skill settings and toggle individual skills off.
 - **Copy route:** delete the unwanted folder from `~/.claude/skills/`.
@@ -114,6 +114,12 @@ You don't have to take all 48.
 ## Skill catalog
 
 All skills live under [`plugins/engineering-practices/skills/`](plugins/engineering-practices/skills).
+
+### Start here
+
+| Skill | Apply when |
+| --- | --- |
+| [`skill-router`](plugins/engineering-practices/skills/skill-router/SKILL.md) | You're not sure which skill fits, or a task spans several — maps situations to skills and lays out the main flows (idea to shipped change, bug to fix, legacy change, design, team process). |
 
 ### Design & architecture
 
@@ -143,6 +149,9 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | [`test-driven-development`](plugins/engineering-practices/skills/test-driven-development/SKILL.md) | Driving design outside-in in small red/green/refactor steps (GOOS, Mancuso, Beck). |
 | [`behavior-driven-development`](plugins/engineering-practices/skills/behavior-driven-development/SKILL.md) | Three-amigos discovery, Gherkin scenarios, living documentation (North, Adzic, Wynne). |
 | [`unit-testing-principles`](plugins/engineering-practices/skills/unit-testing-principles/SKILL.md) | Evaluating test quality — Vladimir Khorikov's four pillars, mocks vs stubs, what's worth testing. |
+| [`art-of-unit-testing`](plugins/engineering-practices/skills/art-of-unit-testing/SKILL.md) | Naming, structuring and isolating unit tests — Roy Osherove's unit of work, `UnitOfWork_State_Expected` names, stub vs mock, seams for testability. |
+| [`xunit-test-patterns`](plugins/engineering-practices/skills/xunit-test-patterns/SKILL.md) | Diagnosing brittle, slow or obscure tests, and choosing test doubles and fixtures — Gerard Meszaros's pattern and smell catalogue. |
+| [`test-data-patterns`](plugins/engineering-practices/skills/test-data-patterns/SKILL.md) | Keeping test setup readable — Test Data Builder, Object Mother, Arrange-Act-Assert and Given-When-Then. |
 
 ### Refactoring & legacy code
 
@@ -166,6 +175,7 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | --- | --- |
 | [`continuous-delivery`](plugins/engineering-practices/skills/continuous-delivery/SKILL.md) | Designing pipelines, branching, deploys, DORA metrics (Humble & Farley). |
 | [`pr-writer`](plugins/engineering-practices/skills/pr-writer/SKILL.md) | Writing, scoping, and sizing pull requests that are fast to review — small CLs, Conventional-Commit titles, stand-alone descriptions (Google eng-practices, GitHub, SmartBear). |
+| [`two-axis-code-review`](plugins/engineering-practices/skills/two-axis-code-review/SKILL.md) | Reviewing a branch or PR on two separate axes — the repository's written standards plus Fowler's smells, and conformance to the ticket or spec — with every finding verified and the two never merged into one ranking (Boehm's verification vs validation). |
 | [`kanban`](plugins/engineering-practices/skills/kanban/SKILL.md) | Setting up boards, WIP limits, flow metrics (Hammarberg & Sundén, Anderson, Leopold). |
 | [`lean-software-development`](plugins/engineering-practices/skills/lean-software-development/SKILL.md) | Mary & Tom Poppendieck's seven principles — eliminate waste, amplify learning, see the whole. |
 | [`flow-efficiency`](plugins/engineering-practices/skills/flow-efficiency/SKILL.md) | Diagnosing why "busy" doesn't equal "shipping" — Modig & Åhlström's flow-efficiency framework. |
@@ -184,6 +194,8 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | [`splitting-user-stories`](plugins/engineering-practices/skills/splitting-user-stories/SKILL.md) | Slicing big stories into INVEST-compliant pieces (Wake, Lawrence, Cohn, Adzic, Patton). |
 | [`example-mapping`](plugins/engineering-practices/skills/example-mapping/SKILL.md) | Breaking a story or spec into rules, concrete examples, and open questions on a four-colour map; audit mode checks whether a written spec's examples cover its rules (Matt Wynne). |
 | [`ticket-writer`](plugins/engineering-practices/skills/ticket-writer/SKILL.md) | Drafting Jira / Linear / GitHub issues that pass review (problem-first structure, INVEST, SMART). |
+| [`grilling`](plugins/engineering-practices/skills/grilling/SKILL.md) | Sharpening a fuzzy idea, plan or design by interview — rounds of decisions with recommendations, facts looked up rather than asked, terms kept in a `GLOSSARY.md` and hard-to-reverse choices in ADRs (Socratic questioning, Evans, Klein's premortem). |
+| [`to-tickets`](plugins/engineering-practices/skills/to-tickets/SKILL.md) | Breaking a plan or spec into thin end-to-end tickets with explicit "blocked by" edges, prefactorings first and wide refactors as expand–migrate–contract (tracer bullets, Elephant Carpaccio, Parallel Change). |
 
 ### Leadership & operating model
 
