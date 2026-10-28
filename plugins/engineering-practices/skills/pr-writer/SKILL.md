@@ -73,6 +73,22 @@ A reviewer reads a PR as *edges crossed*, not lines added. List, explicitly (or 
 - **Events / schemas** — never mutate or remove a field on an existing event (it's immutable history); add a new versioned event. 
 - **Database migrations** — see §5.
 
+### Show the change in the smallest picture that makes it clear
+
+Before the prose, give the reviewer the shape of the change. Pick the smallest view that carries the point, and only the parts that matter:
+
+- **Logic** — a few lines of pseudocode.
+- **Control flow** — a call tree, or a `diff` of the call tree when only part of it changes.
+- **Layout or a broad refactor** — a shallow file tree, or a `diff` of it.
+- **Interaction between components** — a Mermaid sequence diagram.
+- **A new shape a reader must copy** — the code block itself.
+
+One or two of these is usually enough. A picture that needs its own explanation is the wrong picture.
+
+### Merge danger: which door, and how wide the blast
+
+Say whether the change is a **one-way or a two-way door** (Bezos). A two-way door is cheap to walk back: revert and redeploy. A one-way door is not: a destructive migration, a published event or contract other teams consume, deleted data, a decision others will build on. Then name the **blast radius**: who or what feels it if it goes wrong (one endpoint, every consumer of a message, the mobile layout, a nightly job). Reviewers spend their attention where the door is one-way and the radius is wide.
+
 ### Breaking changes — impossible to miss
 
 A bold **`BREAKING CHANGE:`** block at the top: what breaks, who is affected, and the required consumer action. A breaking config-key rename, a removed/renamed field, a changed response shape, a changed status code — all qualify.
@@ -138,6 +154,8 @@ Edge cases & intentional best-effort behaviour:
      How will we know this broke in prod without shipping new code? -->
 
 ## Risk & rollback
+- Door: <!-- one-way / two-way, and why -->
+- Blast radius: <!-- who or what feels it if this goes wrong -->
 - Deploy profile: <!-- e.g. "stateless — no migration/event-schema change" -->
 - Rollback: <!-- "revert this PR / redeploy prior image"; note if a config rename must be reverted per-env too -->
 - Breaking change? <!-- if yes: bold BREAKING CHANGE + consumer action; else "none" -->

@@ -296,6 +296,7 @@ If a test is too easy to write, ask: *is this code actually doing anything?* Cod
 - **`if` statements in tests.** Each test should describe one scenario; conditionals indicate two tests merged.
 - **Test names that describe HOW.** `Sum_Should_Call_Add_Method` couples to implementation. `Sum_OfPositiveNumbers_ReturnsCorrectTotal` describes behavior.
 - **Verifying on stubs.** Overspecification; tests get tied to call patterns instead of outcomes.
+- **Tautological assertions.** The expected value is derived the same way the production code derives it, so the test cannot fail when the logic is wrong: zero protection against regressions however green it is. Expected values must come from an independent source of truth — a hand-worked literal, the spec's example, a known-good output.
 - **Excessive Setup.** A test that needs 50 lines of setup is testing too much, or the SUT has too many dependencies (design feedback).
 - **Multiple acts (when/then) per test.** Each test exercises one transition. Multiple "When" blocks = multiple tests.
 - **One test per public method.** The unit is a *behavior*, not a method. One method may have several behaviors (different inputs, different states) — each gets its own test.

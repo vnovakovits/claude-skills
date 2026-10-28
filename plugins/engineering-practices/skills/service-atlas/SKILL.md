@@ -81,6 +81,8 @@ Give the board link and one link per frame (`?moveToWidget=<frame id>`), then th
 - **One scope.** If the user names an API version, model only that version everywhere; legacy paths appear at most as a hot spot.
 - **Hot spots are specific, verified claims or questions**, placed on the sticky they are about: missing failure paths, silence checks ("what if X never answers?"), out-of-order messages, rules living in the wrong layer.
 - **Process grammar:** read model → actor → command → aggregate or system → event → policy → next command; every command has an issuer, every event a source; conditions are policies, never arrow labels.
+- **Apply the deletion test before calling a module shallow.** Imagine inlining it into its callers: if the complexity disappears it was a pass-through and the card stands; if the same complexity reappears across many callers, the module is earning its keep and is not debt (see `philosophy-of-software-design`).
+- **Respect recorded decisions.** Read the service's ADRs before the survey, and do not propose a card an ADR has already rejected unless the friction is real enough to reopen it; say so on the card. When the user rejects a card for a reason a future survey would need, offer to record it as an ADR so the next atlas does not suggest it again (see `architecture-decision-records`).
 - **Escape once.** Sticky and shape `data-content` takes HTML (`<b>`, `<br>`, `<i>`) escaped once as an attribute; the renderer handles it. Hand-written patches must not double-escape apostrophes.
 
 ## Frames
