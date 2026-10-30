@@ -1,6 +1,13 @@
 # claude-skills
 
-A shared collection of [Claude Code](https://docs.claude.com/en/docs/claude-code) skills the team can install, so we all code with the same set of design heuristics, refactoring catalogs, and methodology vocabularies in Claude's hands.
+I wrote these skills so [Claude Code](https://docs.claude.com/en/docs/claude-code) works the way I do: test-first, domain-driven, and guided by the books that shaped my engineering, including Scott Wlaschin's *Domain Modeling Made Functional*, Eric Evans's *Domain-Driven Design*, Kent Beck's *Test-Driven Development*, Martin Fowler's *Refactoring*, Vladimir Khorikov's *Unit Testing Principles, Practices, and Patterns*, and Mark Seemann's *Code That Fits in Your Head*. My team installs them as one plugin, so we all code with the same design heuristics, refactoring catalogs, and vocabulary.
+
+53 skills cover design, testing, delivery, and writing. A few highlights:
+
+- **domain-modeling-made-functional** and **language-ext-csharp**: workflows as type signatures, errors as values, functional C# with LanguageExt
+- **event-sourcing-cqrs** and **event-storming**: aggregates, projections, event schema evolution, and discovering them with domain experts
+- **test-driven-development** and **unit-testing-principles**: outside-in TDD, and what to mock (Khorikov's managed vs unmanaged dependencies)
+- **observability** and **debugging**: wide structured events, and a feedback-loop-first way to find bugs
 
 > **TL;DR — for teammates installing this:** Run the two `/plugin` commands in [Install](#install), then keep coding. Claude will automatically pull the right skill into context when your task matches one (e.g. "refactor this method" → `refactoring`; "design a new endpoint" → `api-design`). You don't invoke skills manually.
 
