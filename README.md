@@ -188,7 +188,7 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | [`flow-efficiency`](plugins/engineering-practices/skills/flow-efficiency/SKILL.md) | Diagnosing why "busy" doesn't equal "shipping" — Modig & Åhlström's flow-efficiency framework. |
 | [`value-stream-mapping`](plugins/engineering-practices/skills/value-stream-mapping/SKILL.md) | Mapping where a request waits from ask to value — Rother & Shook and Martin & Osterling, with lead time, process time, %C&A and a future state. Renders maps to SVG for documents and PDFs. |
 | [`product-development-flow`](plugins/engineering-practices/skills/product-development-flow/SKILL.md) | Don Reinertsen — cost of delay, WSJF, batch sizing, queueing theory for product work. |
-| [`make-work-visible`](plugins/engineering-practices/skills/make-work-visible/SKILL.md) | Surfacing invisible work, the Five Thieves of Time, Personal Kanban (Dominica DeGrandis). |
+| [`make-work-visible`](plugins/engineering-practices/skills/make-work-visible/SKILL.md) | Dominica DeGrandis — the five thieves of time, the book's own exercises (dependency matrix, interruption experiment, aging report), board design, flow metrics, and an audit mode for a board or tool setup. |
 | [`toyota-kata`](plugins/engineering-practices/skills/toyota-kata/SKILL.md) | Running improvement experiments via the Improvement Kata + Coaching Kata (Mike Rother). |
 | [`toyota-way`](plugins/engineering-practices/skills/toyota-way/SKILL.md) | Reviewing how work is managed against Jeffrey Liker's 14 principles — flow, pull, jidoka, standardised work, go and see, hansei and kaizen — plus the wastes in software terms and Toyota's chief-engineer and set-based product development. |
 

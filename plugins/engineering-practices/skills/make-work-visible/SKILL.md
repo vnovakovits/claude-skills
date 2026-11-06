@@ -1,277 +1,266 @@
 ---
 name: make-work-visible
-description: Apply Dominica DeGrandis's "Making Work Visible — Exposing Time Theft to Optimize Work & Flow" (IT Revolution, 2017; 2nd ed 2022) — the practical discipline of surfacing invisible work, managing WIP, and recovering stolen time. Covers the Five Thieves of Time (too much WIP, unknown dependencies, unplanned work, conflicting priorities, neglected work), kanban board design for individuals and teams, demand analysis (business projects vs maintenance vs ad hoc vs intangible work), WIP limit calculation, Personal Kanban, classes of service, the Demand Card, and the operational rituals that keep work visible (daily standup, replenishment, operations review). Use when a team is busy but not shipping, when WIP feels uncontrolled, when work is being lost or forgotten, when setting up a board for the first time, when designing WIP limits, when diagnosing where time is being stolen, when an individual feels overwhelmed and wants Personal Kanban, or when explaining to leadership why "keeping everyone busy" backfires.
+description: Apply Dominica DeGrandis's "Making Work Visible — Exposing Time Theft to Optimize Work & Flow" (IT Revolution, 2017; 2nd ed. 2022). Covers the five thieves of time (too much WIP, unknown dependencies, unplanned work, conflicting priorities, neglected work), how to expose and counter each, the book's own exercises (demand analysis, work item types, card design, workflow mapping, the five reasons we take on more WIP, the "Oh, By the Way" dependency matrix, the interruption reduction experiment, visualise priorities, the aging report), board design, line of commitment, flow metrics, the Time Thief O'Gram and operations review. Includes an audit mode that checks a board, tool setup or process against each thief, and notes on doing it in a digital tracker. Use when a team is busy but not shipping, WIP feels out of control, work goes stale or gets lost, interruptions or dependencies keep derailing plans, everything is top priority, or a team is designing or redesigning a board.
 ---
 
-# Making Work Visible
+# Making Work Visible (Dominica DeGrandis)
 
-Apply this skill when work is invisible, WIP is uncontrolled, or a team / individual is busy but not shipping. The goal is to surface the work that exists — *all* of it — and then manage it. You cannot manage what you cannot see.
+Use this skill when work is invisible, too much is in progress, or a team is busy but not finishing.
+The first move is always to show the work that exists, all of it, and the problems around it. Then
+manage what you can see.
 
-Based on **Dominica DeGrandis — *Making Work Visible: Exposing Time Theft to Optimize Work & Flow*** (IT Revolution, 2017; 2nd edition 2022).
+Source: **Dominica DeGrandis, *Making Work Visible: Exposing Time Theft to Optimize Work & Flow***
+(IT Revolution, 2017; second edition 2022). Structure, exercise names and figure titles below are
+checked against IT Revolution's companion PDF for the first edition. Material from DeGrandis's later
+talks is marked as such. Exercise steps are paraphrased.
 
-## Core Philosophy
+## Core ideas
 
-**Invisible work is unmanageable work.** If it is not on a board, it is not real to the system — but it is still consuming the team's time. The first move is always *make it visible*.
+1. **Five thieves steal time.** Too much WIP, unknown dependencies, unplanned work, conflicting
+   priorities and neglected work. Naming the thief tells you which countermeasure to reach for.
+2. **Too much WIP is the ringleader.** DeGrandis defines it as demand exceeding capacity and treats it
+   as the thief that feeds the others. Conflicting priorities and unplanned work also push WIP up, so
+   it is a hub, not the only root cause.
+3. **Visibility comes before improvement.** A board shows the work, its state, and the problems
+   delaying it. The team designs that board together through short exercises.
+4. **Measure flow, not busyness.** Part 3 of the book is about metrics and feedback: flow time, lead
+   and cycle time, WIP, aging, flow efficiency and batch size, reviewed in an operations review.
+5. **Change dips before it improves.** The book closes on calibration and the J curve: things often get
+   worse before they get better, so judge an experiment over weeks, not days.
 
-**Time is being stolen — by you, from you.** DeGrandis frames overload not as a personality flaw or a planning failure, but as *theft*. Five distinct thieves are stealing the team's time. Naming them is the first step to catching them.
+## Structure of the book (first edition)
 
-**WIP is the root cause, not the symptom.** Most "we have too much work" complaints resolve to: *we started too many things*. Cutting WIP is the highest-leverage intervention in almost every team's process.
+| Part | Chapters |
+|---|---|
+| Introduction | Work and Flow |
+| 1. The Five Thieves of Time | 1.1–1.5, one per thief |
+| 2. How to Expose Time Theft to Optimize Workflow | 2.1 Make Work Visible · 2.2 Ambush the Ringleader · 2.3 Expose Dependencies · 2.4 Committing the Perfect Crime: Unplanned Work · 2.5 Prioritize, Prioritize, Prioritize · 2.6 Preventing Negligence · 2.7 Useful Board Design Examples |
+| 3. Metrics, Feedback, and Circumstances | 3.1 Your Metrics or Your Money · 3.2 The Time Thief O'Gram · 3.3 Operations Review · 3.4 The Art of the Meeting · 3.5 Beastly Practices |
+| Conclusion | Calibration |
 
-**Multitasking is a lie.** Humans context-switch; they do not parallelise. Each switch carries a measurable cost. The math says: doing two things sequentially finishes both faster than doing them in parallel.
-
-**Yes, you have time. You are spending it on the wrong things.** The fix is not "work harder" — it is "stop doing the work that does not matter so you can finish the work that does."
-
-**The board is a mirror, not a checklist.** Its job is to show the truth of what the team is doing — including the ugly truth that they are doing nine things and finishing none.
-
----
-
-## The Five Thieves of Time
-
-DeGrandis's central organising idea. Each thief has distinct symptoms, distinct costs, and distinct countermeasures.
-
-### Thief 1 — Too Much WIP
-
-**Symptom:** every team member has 4+ things in flight; nothing closes; cycle time grows; standups turn into status reporting on stalled work.
-
-**Cost:** context-switching tax (Gerald Weinberg estimates ~20% productivity loss per concurrent project; at 5 projects you have ~25% capacity left). Higher defect rates. Delivery dates slip silently.
-
-**Countermeasure:** WIP limits. Calculate, post them on the board, enforce them. (See "WIP Limits" below.)
-
-### Thief 2 — Unknown Dependencies
-
-**Symptom:** "I was almost done but I had to wait on…" appears in every standup. Work moves forward in fits and starts. Cross-team coordination happens by accident.
-
-**Cost:** waiting time dominates working time. A 2-hour task can take 2 weeks of calendar time. Estimates become fiction.
-
-**Countermeasure:** make dependencies visible on the card and on the board (DeGrandis: red sticky / dependency markers). Surface them at replenishment, not at the moment they bite.
-
-### Thief 3 — Unplanned Work
-
-**Symptom:** the sprint plan disintegrates by Wednesday. Production incidents, urgent customer requests, "quick favors" — none of which were in the plan — eat the week.
-
-**Cost:** planned work slips. The team learns that plans do not matter, which makes future plans worse.
-
-**Countermeasure:** *measure* unplanned work as a percentage of total. If it is over ~25%, you have a capacity problem, not a discipline problem. Reserve capacity for it explicitly — do not pretend it does not exist.
-
-### Thief 4 — Conflicting Priorities
-
-**Symptom:** everything is P1. Two managers ask for opposite things. The team member with the loudest stakeholder wins.
-
-**Cost:** the team optimises for whoever yelled most recently. Strategic work is starved by tactical noise.
-
-**Countermeasure:** *one* ordered list, visible to everyone. Force the priority conversation upstream of the team. If two stakeholders disagree, *they* resolve it before the work enters the board.
-
-### Thief 5 — Neglected Work
-
-**Symptom:** a sticky has been in "Doing" for 14 days and nobody has mentioned it. Tickets without owners. Half-finished initiatives that nobody will admit are dead.
-
-**Cost:** sunk-cost work consumes mental space and sometimes capacity. Old work goes stale and grows expensive to finish.
-
-**Countermeasure:** age tracking on cards (DeGrandis: dot per day in column). Aged cards get a forced decision at replenishment: finish, kill, or escalate. Never silently abandon.
+The second edition (2022) adds a preface, an afterword on what the author learned in the five years
+since, more exercises and a glossary. The publisher doesn't list which exercises were added.
 
 ---
 
-## Making Work Visible — Board Design
+## The five thieves and their countermeasures
 
-### Personal Kanban (the minimum viable board)
+| Thief | How it shows | Expose it with | Counter it with |
+|---|---|---|---|
+| **Too much WIP** | Many things started, few finished; long waits; people say yes beyond capacity | The board with WIP made explicit (figure "Expose WIP"); a WIP report | WIP limits; the "five reasons why we take on more WIP" conversation; finishing before starting |
+| **Unknown dependencies** | "Oh, by the way, we also need…"; work waits on other teams or components | The "Oh, By the Way" dependency matrix; dependency tags on cards; a dependency swimlane | Make dependencies visible early, synchronise across teams, remove dependencies where possible |
+| **Unplanned work** | Plans dissolve; interruptions arrive during the work; nobody logs them | Tagging unplanned work on the board (the book's "pink dots"); a monthly trend of unplanned work | The interruption reduction experiment: a goalie, office hours, do-not-disturb time, focused sessions |
+| **Conflicting priorities** | Many "top" priorities; arbitrary due dates; the loudest request wins | Visualise priorities; show where conflicting requests come from | An explicit prioritisation policy, a line of commitment, cost of delay |
+| **Neglected work** | Items stuck for weeks; work waiting on validation that never comes | An aging report; "expose neglected work" on the board | Decide per stale item: finish, re-prioritise or drop; lower WIP |
 
-The simplest useful board, one person, three columns. From Jim Benson & Tonianne DeMaria Barry's *Personal Kanban* (2011), which DeGrandis builds on.
-
-```
-┌────────┬──────────┬────────┐
-│ To Do  │  Doing   │  Done  │
-│        │ (WIP=3)  │        │
-├────────┼──────────┼────────┤
-│  ...   │   ...    │  ...   │
-└────────┴──────────┴────────┘
-```
-
-Two rules:
-1. **Visualize your work.** Every commitment goes on the board.
-2. **Limit your WIP.** Pick a number; do not exceed it.
-
-The discipline is not the board. It is the courage to say "I cannot start this until something finishes."
-
-### Team Board (next step up)
-
-```
-┌─────────┬──────────┬──────────┬──────────┬──────────┐
-│ Backlog │  Ready   │  Doing   │  Review  │   Done   │
-│         │ (WIP=5)  │ (WIP=4)  │ (WIP=2)  │          │
-├─────────┼──────────┼──────────┼──────────┼──────────┤
-│  ...    │   ...    │   ...    │   ...    │   ...    │
-└─────────┴──────────┴──────────┴──────────┴──────────┘
-```
-
-Per-column WIP limits. Cards move left-to-right; if Review is full, Doing cannot push — it has to *pull* completed cards through, or stop and help.
-
-### Card Design — what every card shows
-
-DeGrandis's standard card surfaces:
-- **What** — a one-line title (outcome, not implementation).
-- **Who** — owner (an avatar / initials).
-- **Type** — class of service (color or icon: feature / defect / risk / debt).
-- **Dependencies** — red markers / linked card IDs.
-- **Blockers** — explicit blocker mark with reason and who is unblocking.
-- **Age** — a dot per day in current column (or a date sticker).
-- **Size** — t-shirt or points, when used.
-
-Cards without owners do not move. Cards without types are invisible to demand analysis. Both are bugs in the system.
+DeGrandis's heuristic on dependencies, from her talks and the book's framing: each dependency roughly
+doubles the chance of being late. It is a coin-flip illustration, not a measured statistic.
 
 ---
 
-## Demand Analysis — what kinds of work exist?
+## The book's exercises
 
-DeGrandis's four demand categories. Surface them as **swimlanes** or as card types — the team should be able to *see* the mix at a glance.
+All are short, team-based and physical-first (sticky notes, a whiteboard). Run them with the people who
+do the work.
 
-| Type | Examples | Predictability |
+### Chapter 2.1: Make Work Visible (the board-design set)
+
+1. **Demand Analysis** (30–60 min). List the kinds of work the team does and where it comes from. Then
+   list what stops the team finishing (team pain) and what customers and the business suffer (business
+   pain). These become inputs to the board.
+2. **Identify Work Item Types/Categories** (20–30 min). Choose the types of work that will flow across
+   the board, roughly **three to seven**, each with its own colour and a legend. If the team wants more,
+   use one catch-all type for work with the same workflow and tell items apart with tags or icons.
+3. **Card Design** (20–30 min). Decide what each card must show so the thieves are visible: type,
+   owner, blockers, dependencies, dates. A digital tool supplies most fields; on a physical board you
+   design them.
+4. **Workflow Mapping** (40–60 min). Start with three columns, **Options (backlog), Doing, Done**, with
+   Doing drawn wide so it can be split into the states the team needs to see. Put the real work on the
+   board and discuss which states matter, which type causes the most trouble, and why.
+
+### Chapter 2.2: Explore the Five Reasons Why We Take on More WIP (15–30 min)
+
+People pair up and ask each other why they take on more work than they have capacity for, noting one
+answer per sticky. The group clusters the answers and discusses countermeasures, especially for
+requests from someone they like or from their boss.
+
+### Chapter 2.3: The "Oh, By the Way" Dependency Matrix (60–90 min)
+
+Draw a grid with the same team names on rows and columns. **Rows are the teams impacted; columns are
+the teams that impact them.** For an upcoming feature or project, mark each cell where one team's
+output creates work for another and capture the dependency itself. Then discuss how to reduce the risk
+of breaking or delaying another team. Variations add upcoming risks, or use software components in
+place of teams.
+
+### Chapter 2.4: The Interruption Reduction Experiment (45–60 min)
+
+The team lists ways to reduce the cost of interruptions, such as **a goalie** (one person who fields
+interruptions), office hours, do-not-disturb hours, or focused sessions. It picks one, states a
+hypothesis, runs it for a week, then regroups to compare what happened.
+
+### Chapter 2.5: Visualize Priorities (60 min)
+
+With everyone affected in the room and each person time-boxed, answer three questions on the current
+board. What is the prioritisation policy, and how is it shown? Where is the **line of commitment**:
+how do people know an item is prioritised and ready to pull? How is higher-priority work visually
+distinguished from lower?
+
+### Chapter 2.6: Create an Aging Report (40–60 min)
+
+Query the tracker for high-priority, partly done work that hasn't moved or been updated in 30 days
+(widen to 60 or 90 if the list is short). Take a random sample of seven to eleven items. For each,
+note how long it has been stale, the average cycle time for its type, and how long it has been in
+progress compared with similar items. Ask what happens if it waits another week. Consider lowering the
+WIP limit, re-prioritising, and pushing the single most valuable stale item through.
+
+---
+
+## Board design
+
+The book's figures show the range: a basic To Do / Doing / Done board, the same board coloured by work
+type, an expanded Doing column, dependency swimlanes and tags, a line of commitment, multi-level boards
+(a team board feeding a higher-level one), "Done vs. Done Done", a Plan-Do-Check-Act board, and "teams
+within teams". Principles that follow from them:
+
+- **Columns are states the team needs to see,** not a copy of an approval process. Split Doing only
+  where work waits or hands over.
+- **Colour or lanes by work type,** so the mix of work is visible at a glance.
+- **Show blockers and dependencies on the card,** and give cross-team dependencies their own lane when
+  they dominate.
+- **Draw the line of commitment.** Left of it are options; right of it the team has committed.
+- **Make "done" mean done.** If work sits waiting for validation, release or a customer check, show
+  that state. The book calls the place where work rots awaiting validation "the validate pit".
+- **Lanes are for types of work, not for people.** "Individually named swimlanes" appear in the
+  book's chapter on beastly practices: they hide shared work and encourage everyone to be busy on their
+  own thing.
+
+---
+
+## Metrics and feedback (Part 3)
+
+| Measure | What it shows |
+|---|---|
+| **Flow time; lead time and cycle time** | How long work takes end to end, and once started |
+| **WIP report** | How much is in progress, by state and type |
+| **Aging report** | Which items have gone stale |
+| **Flow efficiency** | Active time as a share of total time; most time is usually waiting |
+| **Queueing and batch size** | Why high utilisation and large batches lengthen waits |
+| **Cumulative flow diagram** | Arrivals, WIP and completions over time, used in the operations review |
+
+- **The Time Thief O'Gram** (3.2) is a simple chart the team uses to record which thieves are hurting
+  them and how that changes over time. Individual charts can be combined into a team view.
+- **Operations review** (3.3) is a regular, data-led review of flow across teams, using measures such
+  as the cumulative flow diagram, not a status meeting.
+- **The Art of the Meeting** (3.4) covers making meetings serve flow, including a Lean Coffee format.
+- **Beastly Practices** (3.5) covers anti-patterns, including individually named swimlanes and
+  specialisation, set against T-shaped skills.
+
+**In later talks** (2018 onward, from her Flow Framework work), DeGrandis uses five flow metrics: flow
+time, flow velocity, flow efficiency, flow load and flow distribution. She tracks **flow distribution**
+across four work types (features, defects, technical debt, risk), compares the actual mix with the
+target, and asks what to do less of. These names come from the Flow Framework, not the first edition.
+
+---
+
+## Audit mode: checking a board, tool or process
+
+For each thief, say whether the setup **exposes** it, **counters** it, or **misses** it, and cite what
+shows it.
+
+| Thief | Questions |
+|---|---|
+| Too much WIP | Can anyone see how much is in progress right now, per state and per person? Is there an agreed limit, and what happens when it is hit? Has the team discussed why it takes on more? |
+| Unknown dependencies | Are dependencies on other teams, components or approvals shown on cards or in a lane? Has anyone mapped which teams impact which? |
+| Unplanned work | Is unplanned work tagged so its share and trend are visible? Are interruptions that never become tickets captured? Is there an agreed way to absorb them (a goalie, office hours)? |
+| Conflicting priorities | Is the prioritisation policy written where the work is? Is there a line of commitment? Who can reorder, and who can't? |
+| Neglected work | Is there an aging view or report? Is there a state where finished work waits for validation, and does anyone watch it? |
+
+Then check board design (types 3–7, lanes by type not person, done means done), and whether there is a
+feedback loop (Time Thief O'Gram, operations review). Close with the three changes that expose the
+worst thief first.
+
+### Output template
+
+```markdown
+## Making Work Visible audit: <board or process>
+
+| Thief | Verdict | Evidence |
 |---|---|---|
-| **Business projects** | New features, strategic initiatives. | High — usually planned. |
-| **Maintenance / improvements** | Refactors, debt paydown, dependency upgrades, observability work. | Medium — usually skipped. |
-| **Ad hoc / unplanned** | Production incidents, urgent customer requests, "quick favors". | Low by definition. |
-| **Intangible work** | Architectural runway, learning, mentoring, knowledge-sharing. | Low — usually invisible. |
+| Too much WIP | Exposes / Counters / Misses | ... |
+| Unknown dependencies | ... | ... |
+| Unplanned work | ... | ... |
+| Conflicting priorities | ... | ... |
+| Neglected work | ... | ... |
 
-### Why this matters
+### Board design and feedback
+- ...
 
-Most teams *only* see business projects. Maintenance gets squeezed; intangible work is treated as "free"; unplanned work appears as drama. The mix shows where time *actually* goes — almost always different from where stakeholders think it goes.
-
-### The Demand Card
-
-DeGrandis: for one or two weeks, *every* piece of work that enters the team gets a card, including ad hoc requests, meetings, and interruptions. At the end, sort by type and count. The picture will surprise people. Use the data to negotiate capacity.
-
----
-
-## WIP Limits — how to choose them
-
-### Starting heuristics
-
-- **Per person:** `WIP ≤ 2`. One thing in flight + one being unblocked / reviewed.
-- **Per team:** `WIP ≤ team_size × 1.5`. A team of 4 → 6 cards in *Doing*.
-- **Per column:** lower for slow columns (Review often the tightest), higher for fast ones.
-
-These are starting points. The right answer is empirical: lower until flow improves, raise if the team starves.
-
-### How to enforce
-
-- The limit is **on the column header**, not in the team's head.
-- When a column is full, *nobody* pulls a new card into it. Period.
-- Hitting a limit is a *signal*, not a failure — usually it surfaces a bottleneck or a missing skill.
-- Limits are *team policy*, not management decree. Renegotiate openly.
-
-### When the limit hurts
-
-If the team is starving (people idle, nothing to pull), the limit is too tight *or* the upstream is too slow. Both are visible problems — fix the visible problem, do not paper over by raising the limit.
+### Changes, in order
+1. **<change>**: exposes or counters <thief> because ...
+```
 
 ---
 
-## Classes of Service (when one priority is not enough)
+## In a digital tracker
 
-When work has fundamentally different urgency profiles, use classes of service — each with its own swimlane and policies. DeGrandis (after Anderson):
+The book is physical-first but expects electronic tools. When mapping it to one:
 
-- **Standard** — the default. FIFO-ish.
-- **Expedite** — drop everything; one slot, never more than one card.
-- **Fixed Date** — has a hard external date. Pull early enough that lead time fits.
-- **Intangible** — long-term value (debt, learning). Reserve capacity explicitly; otherwise it never happens.
-
-Each class has explicit policies — when it can be pulled, how it is sequenced, what it preempts. Written on the board.
-
----
-
-## Operational Rituals
-
-Visibility is wasted without rituals that *use* the board.
-
-### Daily Standup — DeGrandis-style
-
-Walk the board **right to left** (closest to Done first), not by person. Three questions *per card*:
-1. What is blocking it?
-2. What is needed to move it?
-3. Has it aged? (Look at the dots.)
-
-**Skip:** "what I did yesterday / will do today" status round-robin. The board shows that. The standup is for *flow*, not for reporting.
-
-Time-box: 15 minutes, standing.
-
-### Replenishment — pulling new work into Ready
-
-Cadence: usually weekly. Stakeholders + team. The question is "what does the team pull *next*?" — not "what is in the plan?". Look at the data:
-- Demand mix (last cycle's actual breakdown).
-- Aged cards (force a decision).
-- Blocked work (resolve before pulling new).
-- Capacity (WIP limits respected).
-
-### Operations Review — broader system health
-
-Cadence: monthly. Look at flow metrics — lead time, cycle time, throughput, % unplanned, % blocked. *Not* individual performance. The board is the team's, not management's scoreboard.
-
----
-
-## Metrics — measuring what the board shows
-
-DeGrandis is light on the math (the kanban skill covers Little's Law and CFDs in more depth) but emphasises a few:
-
-| Metric | What it tells you | Watch for |
-|---|---|---|
-| **Cycle time** (days in *Doing* → *Done*) | How fast work clears once started. | Growth = WIP creeping up. |
-| **Lead time** (idea → *Done*) | How responsive the team is end-to-end. | Most lead time is usually *queue time*, not *work time*. |
-| **Throughput** (cards / week) | How much actually ships. | Flat or declining despite "more work" = WIP problem. |
-| **% Unplanned** | How much of the week was firefighting. | > 25% = capacity problem, not discipline problem. |
-| **% Blocked** | How much WIP is waiting. | High = dependency problem (Thief 2). |
-| **Aged WIP** | Cards over (say) 2× median cycle time. | Each one is Thief 5 in action. |
-
-Pair-up with `flow-efficiency` to talk about resource-vs-flow trade-offs, and `kanban` for the deeper CFD / Little's Law treatment.
+- **Run the exercises first,** on a whiteboard with the team, then configure the tool to match. A board
+  designed for the team by someone else skips the conversation that makes it stick.
+- **Work item types:** one label group or issue type with three to seven values, coloured.
+- **Line of commitment:** a status that means "committed and ready to pull".
+- **WIP:** most trackers show column counts but don't enforce limits. Write the limits into the view or
+  board description and check them in the daily meeting.
+- **Unplanned work:** a tag applied when work arrives unplanned, plus a quick way to log interruptions
+  that never become tickets.
+- **Dependencies:** "blocked by" relations shown on cards, and a view of items waiting on another team.
+- **Aging:** a saved filter for in-progress items not updated in 30 days.
+- **Flow metrics:** the tool's cycle-time, lead-time and cumulative flow charts, sliced by work type.
 
 ---
 
 ## Anti-patterns
 
-| Anti-pattern | Why it is bad | How to fix |
-|---|---|---|
-| **Board with no WIP limits** | Visualises the problem without managing it. Teams feel "agile" while drowning. | Put a number on every active column. Tight first, relax later. |
-| **Tickets without types** | Hides the demand mix; maintenance and intangible work disappear. | Force a class on every card. No type = no pull. |
-| **Standup as status report** | Wastes 15 min/day per person, surfaces nothing actionable. | Walk the board right-to-left. Flow, blockers, age — not "yesterday I…". |
-| **One person = one swimlane** | Optimises for individual utilisation; destroys flow and collaboration. | Lanes are *types of work*, not *people*. People help where the bottleneck is. |
-| **Hidden ad hoc work** | "Quick favors" never hit the board → the team looks underloaded. | Every ask gets a card. Even the 10-minute ones. Cap unplanned slots explicitly. |
-| **Aged cards left alone** | Sunk-cost work hangs around forever; mental load never drops. | Force a finish/kill/escalate decision when a card crosses the age threshold. |
-| **"We will limit WIP next sprint"** | The limit is the intervention. Postponing it is choosing the disease. | Pick a number today. Wrong number > no number. |
-| **Board curated by the manager** | Reality gets edited to look good. | The team owns the board. Management reads the board, does not edit it. |
-| **Tools before walls** | Jumping to Jira / Trello before the team understands the practice. | Start on a physical wall (or whiteboard / Miro). Tooling encodes whatever practice you already have. |
+- **A board without limits.** It shows the overload without reducing it.
+- **Tracking only planned work.** Unplanned work and interruptions still consume the time; leaving them
+  off makes the team look underloaded.
+- **Too many card types.** Past seven, people stop telling them apart. Use tags within a catch-all type.
+- **Lanes per person.** Optimises individual busyness and hides the shared work.
+- **Arbitrary due dates.** Dates with no real consequence drive conflicting priorities; keep fixed
+  dates for real deadlines.
+- **Done that isn't done.** Work parked awaiting validation, release or sign-off, counted as finished.
+- **Stale work left alone.** Items that haven't moved in a month still occupy attention and WIP.
+- **Status meetings in place of flow reviews.** Walk the board by work item and blocker, and review
+  flow measures, not individual activity.
 
 ---
 
-## When this skill applies (vs related skills)
+## Limits
 
-- This skill — **practical, diagnostic, individual + team scale.** Five Thieves of Time, demand analysis, Personal Kanban, ritual design.
-- `kanban` — broader Kanban Method (Anderson, Hammarberg & Sundén): foundational principles, CFDs, classes of service in depth, Scrum vs Kanban.
-- `flow-efficiency` — Modig & Åhlström's resource-vs-flow framework. Use when explaining *why* the principles work to skeptical leadership.
-- `product-development-flow` — Reinertsen's quantitative version. Use when an argument needs hard numbers (cost of delay, queue economics).
-- `lean-software-development` — Poppendieck's principle-level lean. Use when the conversation is "what does lean mean for us?", not "how do we run a board next Monday?".
-
-Pick this skill when the answer needs to be **operational by Friday**. Pick the others when the conversation is theoretical.
-
----
-
-## How to behave when this skill is invoked
-
-1. **Diagnose by Thief.** When a user describes a flow problem ("we keep slipping", "we are drowning", "nothing finishes"), map it to one or more of the Five Thieves before suggesting interventions. Do not jump to solutions.
-2. **Make the invisible visible first.** If the user has no board, the first deliverable is a board (even a sketched one) — not a process change.
-3. **Ask for the demand mix.** If they have a board but cannot answer "what % of last week was unplanned?", that gap *is* the problem.
-4. **Start tight on WIP.** Recommend a starting limit lower than the team's intuition. Lower is almost always right.
-5. **Resist tool-first thinking.** If asked "should we use Jira / Linear / Trello?", redirect: the practice precedes the tool. Tooling encodes whichever discipline already exists.
-6. **Refuse to optimise for individual utilisation.** If a stakeholder asks "how do I keep everyone 100% busy?", explain why that goal *causes* the slowness they are seeing. Use `flow-efficiency` if a deeper economic argument is needed.
+- **The evidence is practitioner experience.** The book is a practical guide built on kanban and lean
+  practice, with few studies behind its heuristics (the dependency "doubling" is an illustration).
+- **It is team-centric.** Cross-team flow is covered through the dependency matrix, multi-level boards
+  and operations review, but portfolio-level questions belong to other sources.
+- **Metric names changed after the first edition.** Her later Flow Framework vocabulary (flow load,
+  distribution and so on) isn't the book's own.
 
 ---
 
-## References
+## How this skill pairs with others
 
-- Dominica DeGrandis — *Making Work Visible: Exposing Time Theft to Optimize Work & Flow* (IT Revolution, 1st ed 2017, 2nd ed 2022).
-- Jim Benson & Tonianne DeMaria Barry — *Personal Kanban: Mapping Work | Navigating Life* (Modus Cooperandi, 2011) — the Personal Kanban foundation DeGrandis builds on.
-- David J. Anderson — *Kanban: Successful Evolutionary Change for Your Technology Business* (Blue Hole Press, 2010) — the Kanban Method DeGrandis operationalises.
-- Gerald Weinberg — *Quality Software Management Vol. 1* (1992) — original context-switching cost estimates DeGrandis quotes.
+- **`kanban`**: the Kanban Method in depth (classes of service, cadences, Little's law, CFDs).
+- **`product-development-flow`**: Reinertsen's economics for WIP, queues, cost of delay and sequencing.
+- **`flow-efficiency`**: the resource-versus-flow-efficiency argument for leadership.
+- **`value-stream-mapping`**: where work waits end to end, before redesigning the board.
+- **`toyota-kata`**: running the interruption experiment and other changes as improvement experiments.
 
-## Related skills
+## Reading
 
-- `kanban` — for deeper Kanban Method foundations and metrics.
-- `flow-efficiency` — for the economic argument behind low utilisation.
-- `product-development-flow` — for quantitative backing (WSJF, cost of delay, queue math).
-- `ticket-writer` — for what *a* card should look like once the board exists.
+- **Dominica DeGrandis**, *Making Work Visible: Exposing Time Theft to Optimize Work & Flow* (IT
+  Revolution, 2017; 2nd ed. 2022).
+- IT Revolution, *Making Work Visible* companion PDF (list of figures and exercises) and the video
+  course *Making Work Visible: Core Concepts*.
+- DeGrandis talks and interviews: *Making Work Visible* (Speaker Deck, 2019); Tech Lead Journal
+  episode 156; InfoQ podcast (2018).
+- **David J. Anderson**, *Kanban* (2010), and **Mik Kersten**, *Project to Product* (2018), for the
+  method and the Flow Framework behind her later metrics.
