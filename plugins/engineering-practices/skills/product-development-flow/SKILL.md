@@ -1,269 +1,375 @@
 ---
 name: product-development-flow
-description: Apply Don Reinertsen's rigorous quantitative framework for product development flow from "The Principles of Product Development Flow" (Celeritas, 2009). Covers the eight major themes (economics, queues, batch size, WIP constraints, flow under uncertainty, fast feedback, decentralized control, cadence), cost of delay and CD3 (cost-of-delay divided by duration), WSJF (Weighted Shortest Job First), queueing theory applied to knowledge work, the U-curve optimization of batch size, why fast feedback has economic value, decentralized control with mission/intent (auftragstaktik), and the four cost drivers of queues. Use when an argument for flow needs quantitative backing, when prioritizing a backlog, when sizing batches (PR sizes, deployment sizes, release sizes), when justifying WIP limits or short feedback cycles to skeptics, when deciding centralized-vs-decentralized control, or when making any product-development decision that benefits from explicit economic framing.
+description: Apply Don Reinertsen's "The Principles of Product Development Flow" (Celeritas, 2009), the quantitative case for flow in product work. Covers its 175 principles across eight areas (economics, queues, variability, batch size, WIP constraints, flow control under uncertainty, fast feedback, decentralised control) with verified codes; cost of delay and the SJF, HDCF and WSJF (CD3) sequencing rules; utilisation, Little's formula and why you control queue size rather than cycle time; the batch-size U-curve; congestion collapse; cadence; pooled versus dedicated capacity; and how to handle interrupt, bug and fixed-date work alongside planned features. Includes a review mode that scores a process document area by area. Use when prioritising a backlog, sizing batches, setting WIP limits, arguing against high utilisation, deciding whether to split a team into feature and support streams, deciding what to centralise or decentralise, or reviewing a ways-of-working document.
 ---
 
 # Principles of Product Development Flow (Don Reinertsen)
 
-Apply this skill when product-development decisions need quantitative backing — sizing batches, setting WIP limits, prioritizing a backlog, deciding what to do with capacity slack, justifying investment in fast feedback, or designing control structures. Reinertsen's book is dense (175 numbered principles across 8 areas); this skill captures the load-bearing ideas you'll reach for most often.
+Use this skill when a product-development decision needs economic and queueing reasoning: what to do
+next, how big a batch should be, how much work to allow in progress, how busy people should be, how to
+handle interruptions, and who should decide.
 
-## Core Philosophy
+The book has nine chapters. Chapter 1 sets out the problem; chapters 2–9 hold **175 numbered
+principles** in eight areas. The full index, with codes, names and a paraphrased gist of each, is in
+[references/principle-index.md](references/principle-index.md). Codes in this skill follow that index.
+They come from a study transcription whose counts match the book, so check the book before quoting a
+code formally.
 
-**Product development is fundamentally different from manufacturing.** Manufacturing makes the same thing repeatedly; product development makes new things once. The economics, the queues, and the feedback loops behave differently. Tools from manufacturing (e.g., maximizing utilization, eliminating WIP from balance sheets) often actively harm product development.
+## Core ideas
 
-**Quantify the economics or you cannot decide.** Most decisions in product development are made on proxy variables (utilization, "done", schedule adherence) rather than on what actually matters (lifecycle profit, cost of delay). The book's central methodological move: **express decisions in money**.
-
-**The single biggest source of waste in product development is invisible queues.** Inventory in manufacturing is visible; inventory in product development is digital, hidden in tools, distributed across handoffs. Until you make queues visible and economic, you can't manage them.
-
-**Batch size is the master variable.** Reducing batch size — of code changes, of test runs, of releases, of design decisions — pays back in every dimension: faster feedback, lower variability, lower cost-of-delay, lower risk, higher motivation. If you change only one thing about a development process, reduce batch sizes.
-
-**Fast feedback is the economic lever.** Reducing feedback latency by 10× often improves outcomes by orders of magnitude — not by 10×. Most teams under-invest dramatically in this.
-
----
-
-## The Eight Themes (and Their Load-Bearing Principles)
-
-### 1. The Economic View
-**Goal:** make decisions in terms of the economic outcomes (lifecycle profit, cost of delay), not in terms of proxies.
-
-Load-bearing principles:
-- **Principle E1 — The Principle of Quantified Overall Economics:** if you cannot quantify a decision's economic impact, you cannot make it well.
-- **Principle E2 — The Principle of Interconnected Variables:** product-development decisions trade off multiple dimensions (cost, schedule, quality, feature set, risk). The economic frame is the only way to resolve trade-offs honestly.
-- **Principle E5 — The U-Curve Principle:** most cost vs benefit relationships in product development are U-curves, not monotonic. Both extremes are bad; the optimum is in the middle.
-- **Principle E8 — The First Perishability Principle:** value perishes. Delayed delivery destroys more value than most teams realize.
-
-The **Cost of Delay** is the single most important quantitative tool. See its own section below.
-
-### 2. Managing Queues
-**Goal:** find, measure, and reduce invisible queues.
-
-Load-bearing principles:
-- **Principle Q1 — The Principle of Invisible Inventory:** product development queues are invisible; you must hunt for them.
-- **Principle Q3 — Little's Law:** Cycle time = WIP / Throughput. The mathematical core of flow.
-- **Principle Q4 — The Capacity Utilization Principle:** queues grow non-linearly as utilization approaches 100%. The system gets exponentially worse past ~70-80% utilization.
-- **Principle Q11 — The Queue Size Optimization Principle:** the right queue size is not zero — small queues smooth variability — but you must be able to measure them.
-
-### 3. Reducing Batch Size
-**Goal:** smaller is almost always better.
-
-Load-bearing principles:
-- **Principle B1 — The Batch Size Queueing Principle:** reducing batch size reduces queues and cycle time.
-- **Principle B5 — The Feedback Principle:** smaller batches accelerate feedback; faster feedback compounds in value.
-- **Principle B7 — The Risk Principle:** smaller batches reduce risk because failures are contained.
-- **Principle B8 — The Variability Principle:** smaller batches reduce variability in cycle time.
-- **Principle B9 — The Overhead Principle:** transaction costs (testing, deployment, review) drive optimal batch size up. Reduce transaction costs and small batches become viable.
-
-**The implication for software:** invest heavily in reducing transaction costs (automated tests, CI, automated deployment) so you can take advantage of small batches. This is why Continuous Delivery is a flow-optimization investment, not just a productivity tool.
-
-### 4. Applying WIP Constraints
-**Goal:** physically limit work in progress; let the limit force prioritization.
-
-Load-bearing principles:
-- **Principle W3 — The WIP Constraint Principle:** capping WIP enforces flow and surfaces problems.
-- **Principle W4 — The Progressive Throttling Principle:** when WIP is constrained, low-value work is pulled out of the system first.
-- **Principle W6 — The Pull Principle:** WIP constraints turn push systems into pull systems.
-
-(The Kanban skill operationalizes these.)
-
-### 5. Controlling Flow Under Uncertainty
-**Goal:** design controls that work in the presence of variability rather than assuming it away.
-
-Load-bearing principles:
-- **Principle F4 — The Cadence Principle:** regular cadences (weekly, sprint-like) reduce variability and coordination cost.
-- **Principle F8 — The Sequencing Principle:** within a cadence, sequence work by cost of delay and duration (WSJF).
-- **Principle F12 — The Mix Principle:** if work types differ in cost-of-delay/duration ratios, separate them (this is what classes of service in Kanban operationalize).
-- **Principle F14 — The Local Transparency Principle:** decisions should be made where the information is, not bottlenecked through hierarchy.
-
-### 6. Using Fast Feedback
-**Goal:** treat feedback latency as an economic variable.
-
-Load-bearing principles:
-- **Principle FF1 — The Principle of Feedback Economics:** feedback latency has quantifiable economic cost; usually larger than teams expect.
-- **Principle FF4 — The Fast-Feedback Investment Principle:** investing in faster feedback (CI minutes, observability, customer access) routinely pays back at 10-100× the investment cost.
-- **Principle FF11 — The Local Decision Principle:** fast feedback enables decentralization (you don't need to escalate when you can see the result quickly yourself).
-
-### 7. Achieving Decentralized Control
-**Goal:** push decisions to where information lives.
-
-Load-bearing principles:
-- **Principle D1 — The Principle of Alignment:** centralized control requires alignment by information flow up the hierarchy; decentralized control requires alignment by shared intent.
-- **Principle D4 — Auftragstaktik (Mission Command):** specify the *intent* and *constraints*, let subordinates choose the means. Borrowed from Prussian military doctrine.
-- **Principle D8 — The Asymmetric Information Principle:** local actors have information that hierarchies don't; centralizing decisions loses that information.
-
-### 8. Rhythm, Cadence, Synchronization
-**Goal:** use regular timing to reduce coordination cost and variability.
-
-Load-bearing principles:
-- **Principle R1 — The Cadence Capacity Margin Principle:** cadences require capacity margin; you cannot run a daily-cadence team at 100% utilization.
-- **Principle R4 — The Synchronization Principle:** synchronizing arrivals to a cadence reduces queue variability.
-- **Principle R5 — The Cross-Functional Cadence Principle:** different functions on a cadenced schedule integrate better than uncoordinated ones.
+1. **Decide in money.** Most process decisions are made on proxies such as utilisation, conformance or
+   "busy". Reinertsen wants them made on economics, and says that if you quantify only one thing, it
+   should be cost of delay (E1, E3).
+2. **Queues are the main waste, and they are invisible.** Development inventory is information, so it
+   doesn't show on a shop floor or a balance sheet (Q1, Q2). Queues lengthen cycle time and add risk,
+   variability, overhead and quality problems, and they sap motivation.
+3. **High utilisation creates queues.** As utilisation approaches 100%, queues grow sharply, and past a
+   point output collapses (Q3, F1). Spare capacity is an economic choice, not idleness.
+4. **Batch size is the cheapest lever.** Smaller batches cut cycle time, variability and risk, and speed
+   up feedback (B1–B4). The best size is a U-curve set by transaction cost, so cut transaction cost
+   first (B11, B12).
+5. **Variability is not always bad.** Product development creates value through uncertain experiments.
+   Reduce the *cost* of variability rather than the variability itself (V1, V3, V12).
+6. **Decentralise with intent.** Push decisions about problems that age quickly to the people nearest
+   the information, aligned by a stated mission and decision rules (D1, D8, E13).
 
 ---
 
-## Cost of Delay and CD3
+## The eight areas
 
-The book's single most quoted concept. **Cost of Delay (CoD)** measures, in money per unit time, how much value is lost by delivering one period later.
+| Ch. | Area | Codes | Central question |
+|---|---|---|---|
+| 2 | The economic view | E1–E21 | What is this worth, and what does a delay cost? |
+| 3 | Managing queues | Q1–Q16 | Where is work waiting, and how much does it cost? |
+| 4 | Exploiting variability | V1–V16 | Where does uncertainty create value, and where does it only cost? |
+| 5 | Reducing batch size | B1–B22 | How much work moves together, and why that much? |
+| 6 | Applying WIP constraints | W1–W23 | How much is in progress, and what happens at the limit? |
+| 7 | Controlling flow under uncertainty | F1–F30 | How do we sequence, route and pace work we can't predict? |
+| 8 | Using fast feedback | FF1–FF24 | How quickly do we learn that something is off? |
+| 9 | Achieving decentralized control | D1–D23 | Who decides, with what information and intent? |
 
-For example: a feature that, once launched, generates £100k/month in revenue has a CoD of approximately £100k/month if it's late by a month — the month of revenue is lost forever.
+### 2. The economic view
 
-CoD captures three things at once:
-- **Value-over-time** — does this thing get more valuable to deliver soon?
-- **Window of opportunity** — does the value evaporate after a certain date (e.g., Christmas-shopping features in November)?
-- **Time-critical urgency** — is there a cliff (e.g., regulatory deadline) where CoD jumps to infinity?
+- **E3 Quantified Cost of Delay.** If you quantify one thing, quantify this.
+- **E6 U-Curve.** Important trade-offs have an optimum in the middle. Pushing one variable to its
+  extreme is usually wrong.
+- **E7 Imperfection.** A rough estimate of cost of delay beats none. Teams that wait for precision never
+  start.
+- **E10 First Perishability.** Many choices lose value if made slowly.
+- **E13 First Decision Rule.** Decision rules (for example, "one week of delay costs about X") let
+  people far from the centre make economic trade-offs.
+- **E17 Sunk Cost** and **E16 Marginal Economics.** Judge the next increment on its own cost and value.
 
-### CD3 — Cost of Delay Divided by Duration
+### 3. Managing queues
 
-CD3 (also known as **WSJF — Weighted Shortest Job First**):
+- **Q3 Queueing Capacity Utilization.** Queues rise sharply with utilisation. For a single queue with
+  random arrivals and service times (M/M/1), the wait relative to the work time is u ÷ (1 − u):
 
-$$ \text{CD3} = \frac{\text{Cost of Delay}}{\text{Duration}} $$
+  | Utilisation | 50% | 70% | 80% | 90% | 95% |
+  |---|---|---|---|---|---|
+  | Wait ÷ work time | 1× | 2.3× | 4× | 9× | 19× |
 
-Higher CD3 → do first.
+  Kingman's approximation generalises this: waiting grows with utilisation and with the variability of
+  both arrivals and work.
+- **Q4 High-Queue States.** Most of the damage comes from the occasional very long queue.
+- **Q7 Queueing Structure.** Serve pooled demand with reliable, high-capacity servers.
+- **Q12 Little's Formula.** Wait time = queue size ÷ processing rate.
+- **Q13 and Q14 Queue Size Control.** Control queue size, not utilisation (Q13) or cycle time (Q14).
+  Queue size is a leading indicator; cycle time reports a problem after it has happened.
+- **Q15 Diffusion and Q16 Intervention.** Random queues drift far out of control and stay there. Act;
+  don't wait for them to correct themselves.
 
-**Why this beats every other prioritization scheme:**
-- It's an economic metric, not a proxy.
-- It naturally prefers short, valuable items over long ones (matching queueing theory).
-- It can be applied with rough estimates and still rank things better than gut feel.
+Where queues hide in software teams: review, testing, deployment, design, decisions, environments,
+triage, and the backlog itself. The decision queue is often the most expensive and the least visible.
 
-**Practical use:**
-- Estimate CoD per item in money/week (or in story-points-of-pain, if money is impossible).
-- Estimate duration in weeks (or story points).
-- Compute CD3.
-- Sort the backlog.
+### 4. Exploiting variability
 
-CD3 is the most-used Reinertsen idea in modern agile/SAFe contexts (where it's usually called WSJF).
+- **V1 Beneficial Variability** and **V2 Asymmetric Payoffs.** An experiment with a cheap downside and a
+  large upside is worth running even if it usually fails (see also E20 Newsboy).
+- **V5 Variability Pooling.** Combining uncorrelated work reduces total variation. This is the argument
+  for pooled capacity.
+- **V6 Short-Term Forecasting.** Forecasts get much easier over short horizons, so plan short.
+- **V7 Small Experiments.** Many small experiments vary less than one big one.
+- **V12 Variability Consequence.** Reducing the consequence (feature flags, fast rollback, canaries) is
+  usually cheaper than reducing variability.
+- **V15 Iteration Speed.** Improving iteration speed usually beats lowering the defect rate.
 
----
+### 5. Reducing batch size
 
-## The U-Curve Mindset
+- **B1–B4.** Smaller batches cut cycle time and variability, speed up feedback and reduce risk.
+- **B8 Slippage and B9 Death Spiral.** Large batches slip disproportionately and grow into larger ones.
+- **B11 Batch Size Economics and B12 Low Transaction Cost.** The optimum balances holding cost against
+  transaction cost. Automating test and deployment moves the optimum smaller; this is why continuous
+  delivery is a flow investment.
+- **B16 Transport Batches.** The handoff batch matters most: how much one step passes to the next.
+- **B21 Batch Size First.** Reduce batch size before attacking bottlenecks.
 
-A recurring shape in product development economics: a U-curve where both extremes are bad and the optimum is in the middle.
+Batches in software include: pull requests, releases, quarterly plans, approval packs, requirement
+documents handed over whole, questions saved for a weekly meeting, and the funding decision itself.
 
-Examples:
-- **Batch size vs cost.** Tiny batches → high transaction cost overhead. Huge batches → high holding cost (queues, cycle time). Optimum is somewhere in between, driven by transaction-cost economics.
-- **WIP vs throughput.** Too low → starvation, idle capacity. Too high → queueing, long cycle times. There is a sweet spot.
-- **Centralization vs decentralization.** Fully centralized → information bottlenecks. Fully decentralized → coordination loss. Decisions should be classified and routed accordingly.
-- **Specialization vs generalization.** Pure specialists → handoff queues. Pure generalists → no expertise depth. Most teams need a mix.
+### 6. Applying WIP constraints
 
-**The trap most teams fall into:** assuming the relationship is monotonic ("smaller is always better", "more independence is always better"). It isn't. There's a U-curve, and you want to find the bottom.
+- **W1 WIP Constraints.** Limit WIP to control cycle time and flow.
+- **W6 Demand Blocking**, **W7 WIP Purging** and **W8 Flexible Requirements.** At the limit, stop
+  admitting work, drop low-value work, or shed requirements.
+- **W9 Resource Pulling**, **W11 Big Gun**, **W12 T-Shaped Resources** and **W13 Skill Overlap.** React to
+  an emerging queue by moving capable people to it quickly, which needs cross-trained people.
+- **W10 Part-Time Resources.** Use part-time people for high-variability tasks.
+- **W15 Aging** and **W16 Escalation.** Watch the oldest items, and plan in advance how outliers escalate.
+- **W18 Differential Service.** Give different workstreams different service levels inside one
+  WIP-limited system.
+- **W21 Critical Queue.** Limit WIP where the queue is most expensive.
 
----
+### 7. Controlling flow under uncertainty
 
-## Queues in Product Development
+- **F1 Congestion Collapse** and **F2 Peak Throughput.** Overload causes a sudden drop in output.
+  Limit occupancy to keep throughput at its peak, as ramp meters do on a motorway.
+- **F5–F9 Cadence.** A regular cadence stops variance accumulating, makes waiting times predictable,
+  enables small batches, and needs spare capacity (F6).
+- **F15–F17 Sequencing.** See the sequencing section below.
+- **F18 Local Priority.** Priorities are local to a queue; a global ranked list hides that.
+- **F19 Round-Robin.** When durations are unknown, time-share capacity.
+- **F20 Preemption.** Preempt work in progress only when switching costs are low.
+- **F25 Flexible Resources**, **F26 Late Binding**, **F28 Preplanned Flexibility** and **F29 Resource
+  Centralization.** Absorb variation with flexible capacity bound to work as late as possible. Plan and
+  invest in that flexibility ahead of time.
 
-The chapter most software teams find revelatory. Reinertsen's claim: **the dominant source of waste in product development is queue time, not work time**.
+### 8. Using fast feedback
 
-Where queues live in software teams:
-- **Work waiting for review** (the PR queue)
-- **Work waiting for QA** (the test queue)
-- **Work waiting for deployment** (the release queue)
-- **Work waiting for design** (the design queue)
-- **Work waiting for product decisions** (the decision queue)
-- **Work waiting for the right environment** (the test-env queue)
-- **Bugs waiting to be triaged** (the triage queue)
-- **Stories waiting in the backlog** (the backlog queue — often the biggest)
+- **FF3 Leading Indicators.** Control on variables that predict the future, such as queue size, not
+  ones that report the past.
+- **FF7** and **FF11.** Fast feedback allows smaller queues, and small batches give fast feedback.
+- **FF9 Useless Measurement.** Measuring something does not get it done.
+- **FF10 First Agility.** A short turning radius beats a long planning horizon.
+- **FF15 Relief Valve.** Agree in advance what gives when the system is overloaded.
+- **FF16 Multiple Control Loops.** Nest fast loops (daily) inside slow ones (quarterly).
 
-**The four cost drivers of queues:**
-1. **Holding cost** — the value lost while work waits (i.e., cost of delay accrued during queue time).
-2. **Variability cost** — queues amplify variability; long queues unpredictable.
-3. **Quality cost** — work in queues drifts out of context; reviewers forget; bugs grow up.
-4. **Opportunity cost** — queued capacity can't do other valuable work.
+### 9. Achieving decentralized control
 
-**The intervention:** find the longest queues, measure them, design them out. This is more important than working faster.
-
----
-
-## Decentralized Control and Mission Command
-
-A theme that distinguishes Reinertsen from most agile literature: not all decisions belong with the team.
-
-Decisions that should be **decentralized** (pushed to teams):
-- Frequent (made many times)
-- Time-critical (cost of delay accrues fast)
-- Locally-informed (team has the info)
-- Limited blast radius (a bad decision doesn't sink the company)
-
-Decisions that should be **centralized** (kept with leadership):
-- Infrequent
-- Not time-critical
-- Globally-informed
-- High blast radius
-
-**The Auftragstaktik (mission command) pattern:**
-- Leadership specifies the **intent** ("what we are trying to achieve") and **constraints** ("what is off-limits").
-- Teams choose the **means** within those constraints.
-- Feedback flows back; intent is revised.
-
-This is the same principle as the BDD outside-in flow, the DDD bounded-context decentralization, and the microservices "two-pizza team" guidance — and Reinertsen gives it a name and an economic justification.
-
----
-
-## How This Skill Pairs with Others
-
-- **`flow-efficiency`** — Modig & Åhlström's strategic frame; Reinertsen is the quantitative foundation. Read flow-efficiency first for the why, this for the how-much.
-- **`kanban`** — operationalizes WIP constraints (theme 4), cadence (theme 8), and flow management (theme 5).
-- **`continuous-delivery`** — the deployment side of batch-size reduction (theme 3) and fast feedback (theme 6).
-- **`splitting-user-stories`** — the inputs to batch-size reduction.
-- **`lean-software-development`** — Poppendieck's principles overlap heavily but with a different emphasis (philosophy/mindset). Both are useful.
-- **`toyota-kata`** — the improvement engine for moving toward higher flow.
-- **`observability`** — fast feedback in production; SLOs as feedback latency metrics.
-- **`architecture-decision-records`** — capturing centralization-vs-decentralization decisions as ADRs.
-
----
-
-## Common Pitfalls
-
-- **Optimizing for utilization.** Reinertsen's biggest target. See the Capacity Utilization Principle (queues grow non-linearly past 70-80% utilization).
-- **Ignoring transaction costs.** Teams want small batches but can't afford them because their test/deploy pipeline is slow. The fix is investment in pipeline speed, not bigger batches.
-- **Prioritizing by value alone.** Misses duration. CD3 / WSJF is the right metric.
-- **Eliminating queues to zero.** Some queue is necessary as a buffer against variability. The goal is to size queues deliberately.
-- **Centralizing all decisions.** Loses local information. Slows everything. Use the decentralization criteria above.
-- **Decentralizing all decisions.** Loses alignment. Different decisions belong at different levels.
-- **Treating cadence as bureaucracy.** Cadence is a variability-reduction tool, not just process overhead.
-- **Mistaking the U-curve for monotonic.** Pushing any single variable indefinitely past its optimum produces worse outcomes.
+- **D1 Second Perishability** and **D2 Scale.** Decentralise problems that age badly. Centralise those
+  that are rare, large, or have economies of scale.
+- **D5 Virtual Centralization.** Be able to pool decentralised people quickly when needed.
+- **D7 Alignment**, **D8 Mission** and **D10 Main Effort.** State the end state, its purpose and the fewest
+  constraints. Name a main effort; everything else supports it, and it can shift (D11).
+- **D15 Tactical Reserves.** Keep some reserve capacity at the local level.
+- **D19 Quality of Service.** If response time matters, measure response time.
 
 ---
 
-## A Worked Decision: PR Size
+## Cost of delay and sequencing
 
-A team is debating: "Should we encourage smaller PRs?" Apply Reinertsen:
+**Cost of delay** is the value lost per unit of time that a piece of work is not done, in money per
+week. It is the weighting in every rational sequencing rule. Estimate it roughly (E7) with a few
+inputs: the value once delivered, how that value changes with time, and any date after which it
+collapses.
 
-1. **Economic view.** Smaller PRs reduce cycle time (faster merge → faster feedback → less rework). They reduce risk (smaller blast radius on bad changes). They reduce coordination cost (fewer review conflicts). They increase transaction cost per change (each PR has overhead — review, CI run, deployment). U-curve.
+Delay costs have different shapes over time. Kanban's class-of-service archetypes describe four:
 
-2. **Queue analysis.** Where is the queue? PRs typically wait in review. Reducing PR size reduces total review-queue volume; reviews of small PRs complete faster; throughput goes up.
+| Shape | Delay cost | Typical work | Policy |
+|---|---|---|---|
+| Expedite | High and immediate | Outage, data loss, security breach | Pre-empts other work; allow one at a time |
+| Fixed date | Jumps at a known date | Regulatory or partner change | Start from the latest safe start, not "when free" |
+| Standard | Rises steadily | Most features and improvements | Sequence by CD3 |
+| Intangible | Unknown now, real later | Tech debt, platform work | Guaranteed share of capacity |
 
-3. **Batch size principle.** Smaller batch → faster feedback → smaller risk → smaller variability in cycle time. All wins, IF transaction cost per PR is low.
+**Sequencing rules (F15–F17):**
 
-4. **Transaction cost.** If each PR triggers a 45-minute CI run plus 30 minutes of reviewer setup, transaction cost is high. Optimum batch size moves up. Fix the CI run time first; then encourage small PRs.
+- If delay costs are similar, do the **shortest job first** (SJF).
+- If durations are similar, do the **highest cost of delay first** (HDCF).
+- If neither is similar, use **weighted shortest job first** (WSJF): sort by
+  **CD3 = cost of delay ÷ duration**, highest first.
 
-5. **Decision.** Yes, encourage smaller PRs — but as part of a coordinated investment in lower transaction costs (faster CI, lighter-weight review process, automated checks).
+Worked example, all in £k per week of delay:
 
-This is the kind of analysis the framework enables. Compare to "small PRs are good practice" — true but not actionable when the team faces a real-world transaction-cost wall.
+| Job | Cost of delay | Duration (weeks) | CD3 | Order |
+|---|---|---|---|---|
+| A | 10 | 5 | 2 | 3rd |
+| B | 6 | 1 | 6 | 1st |
+| C | 15 | 4 | 3.75 | 2nd |
+
+Doing B, C, A delays less value than doing the "most valuable" job C first.
+
+**Cautions:**
+
+- WSJF's benefit comes from using a common unit, money per week. Relative scoring schemes such as
+  SAFe's WSJF, which add up 1–20 scores for value, urgency and risk, lose that unit. They are still
+  better than gut feel, but the arithmetic means less.
+- **F18 Local Priority:** the ranking applies to one queue. Don't impose one global list on queues with
+  different economics.
+- **F20 Preemption:** breaking into work in progress costs switching time. Only expedite items should do
+  it, and only when switching is cheap.
 
 ---
 
-## Quick Application Checklist
+## Interrupts, BAU and mixed work
 
-When making a product-development decision:
+Product teams usually face two kinds of demand: planned work (features, initiatives) and unplanned work
+(bugs, incidents, support, fixed-date partner changes). A common response is to split them into a
+"feature stream" and a separate "BAU" or "support" stream. Reinertsen doesn't prescribe a team structure
+for this, but several of his principles bear directly on it.
 
-- [ ] Can I express the decision in economic terms (money per unit time)?
-- [ ] What's the cost of delay for this option?
-- [ ] What queues will this decision lengthen or shorten?
-- [ ] What batch size does this decision implicitly choose? Is it on the right side of the U-curve?
-- [ ] What's the transaction cost? Can I reduce it before adjusting batch size?
-- [ ] What feedback latency does this introduce or remove?
-- [ ] Should this decision be centralized or decentralized? Why?
-- [ ] Is the team currently above the utilization threshold where queues explode?
-- [ ] If I'm prioritizing, am I using CD3 / WSJF or a proxy?
+**What the principles favour:**
+
+- **Pooling.** Pooled demand served by shared capacity queues less (Q7, V5, F29). Two dedicated groups,
+  each serving its own stream, will see one group's queue grow while the other has slack.
+- **Flexible capacity bound late.** Flexible, cross-trained people assigned to work as late as possible
+  absorb variation (F25, F26, W12, W13). Preplanned flexibility (F28) and resource pulling (W9) move
+  people to an emerging queue quickly.
+- **Differential service, not separate systems.** Give urgent work a faster service level inside one
+  WIP-limited system (W18).
+- **Part-time and reserved capacity.** Use part-time resources for high-variability tasks (W10), keep
+  tactical reserves (D15), and leave capacity margin so cadence works (F6).
+- **Cadence bounds waiting.** In his talks, Reinertsen replaces a vague share of someone's time (say,
+  "10% for project support") with a fixed daily slot where that support is top priority. A regular slot
+  puts an upper bound on how long a request waits (F7).
+- **FIFO and hard admission rules don't fit urgent work.** His satirical "TPS emergency room" shows that
+  copying manufacturing rules literally (first in, first out; turn arrivals away at the WIP limit) is
+  wrong when urgency varies. Urgent work needs its own queueing discipline.
+
+**What practitioners add:**
+
+- **Google SRE** found that spreading tickets round-robin across a team failed. Engineers couldn't do
+  project work and ticket duty at once, so tickets were centralised on a rotating person. The rotation
+  sits inside the team that owns the service, and that person is written off for project work that
+  week.
+- **Kenny Rubin** recommends that one team reserve capacity for interrupts when their volume is
+  predictable from history. If volume is wildly scattered, he suggests routing it to a separate team.
+- **LeSS (Craig Larman, Bas Vodde)** argues that each additional backlog reduces an organisation's
+  ability to adapt toward the highest value. One product means one priority order.
+
+**A decision guide:**
+
+| Option | What it is | Fits when | Costs |
+|---|---|---|---|
+| One pool, differential service | One backlog, classes of service, everyone can take any item | Interrupts are modest and predictable | Interrupts fragment focus unless contained |
+| One pool with a rotating interrupt role | One backlog; a rota person per team takes interrupts first and helps finish the top item when quiet | Most product teams | A weekly handover; someone is out of feature work |
+| Separate support team | Its own people and backlog | Interrupt volume is high, unpredictable and needs different skills | Two queues, no pooling, defects don't return to their makers, a priority boundary to argue over |
+
+The middle option fits most of these principles at once: pooling and one priority order (Q7, V5, F18
+within one system), part-time reserved capacity (W10, D15), and differential service (W18). The SRE
+evidence supports containing interrupts on one person. Signs that a split is hurting flow:
+
+- The support group is fixed in size whatever the demand.
+- Help flows one way: support can pull feature people in, but not the reverse.
+- Each side has its own priority rules, and nobody trades one stream against the other.
+- Defects from new work land on people who didn't build it.
+- Fixed-date work is treated as an interruption, although its date was known weeks ahead.
+- Measures are kept per stream, so no one sees total WIP or the share of capacity going to failure
+  demand (work caused by not getting something right the first time).
+
+---
+
+## Reviewing a process through this lens
+
+Score the document area by area as **Strong**, **Partial** or a **Gap**, citing the clause that shows it.
+
+| Area | Questions |
+|---|---|
+| Economics (E) | Is cost of delay estimated, even roughly? Are decisions framed in money or in proxies? Are there decision rules people can apply locally? |
+| Queues (Q) | Are queues visible, including decisions and approvals? Is queue size measured and acted on, or only cycle time after the fact? Is utilisation a target? |
+| Variability (V) | Is variability treated as something to remove at all costs, or are consequences reduced (flags, rollback)? Are experiments small and cheap? |
+| Batch size (B) | What is the largest batch: approval, requirements, release, handover? Is transaction cost being driven down? |
+| WIP (W) | Are there explicit WIP limits? What happens at the limit: block, purge or shed scope? Can people move to an emerging queue? |
+| Flow control (F) | How is work sequenced: CD3, HDCF, FIFO, loudest voice? When may work be preempted? Is capacity flexible and bound late? Is there a cadence with margin? |
+| Feedback (FF) | Are the measures leading indicators? How long from a question to an answer, or from a release to a signal? Is there an agreed relief valve? |
+| Decentralised control (D) | Which decisions are centralised, and do they age well? Is intent stated so teams can decide? Is there a main effort? |
+
+Then pick the three to five findings with the most economic leverage, state the change for each, and
+credit what is strong before listing gaps.
+
+### Output template
+
+```markdown
+## Flow review: <document>
+
+| Area | Verdict | Evidence |
+|---|---|---|
+| Economics (E) | Strong / Partial / Gap | <clause, quote> |
+| Queues (Q) | ... | ... |
+| Variability (V) | ... | ... |
+| Batch size (B) | ... | ... |
+| WIP (W) | ... | ... |
+| Flow control (F) | ... | ... |
+| Feedback (FF) | ... | ... |
+| Decentralised control (D) | ... | ... |
+
+### Findings
+1. **<title>** (<principle codes>): <what and where>. **Change:** <the move>.
+```
+
+---
+
+## Anti-patterns
+
+- **Utilisation as a target.** "Keep everyone busy" is the setting that creates queues and collapse.
+- **Steering by cycle time.** By the time cycle time moves, the queue that caused it has been there for
+  weeks.
+- **Priority by volume or seniority.** Without cost of delay, the loudest request wins.
+- **Value-only ranking.** Ignoring duration; WSJF exists because a short job can be worth doing before a
+  more valuable long one.
+- **Dedicated queues for every work type.** Each split forfeits pooling and adds a boundary to argue over.
+- **Expedite as a habit.** If most items are urgent, nothing is; limit expedite to one at a time.
+- **Big-batch approval.** Approving and funding a whole solution at once, then treating every learning
+  as a change request.
+- **Decision queues.** Questions parked for a weekly meeting or an absent approver. Decisions age badly
+  (D1).
+- **Zero queues.** Some queue buffers variability; size it deliberately (Q9).
+
+---
+
+## Limits and criticisms
+
+- **Cost of delay is hard to estimate,** and teams that wait for accuracy never use it. Reinertsen's
+  answer is E7: rough numbers still beat proxies.
+- **The queueing results assume steady arrivals and service.** Real teams have correlated, bursty demand.
+  The direction of the effects holds; the exact multipliers don't.
+- **The book is dense and abstract,** with few worked software case studies. Expect to translate.
+- **Principle codes circulate mainly through study notes.** Treat them as a convenient index, not
+  citations.
+- **It says little about people and culture.** Pair it with a management-system lens such as the Toyota
+  Way.
+
+---
+
+## How this skill pairs with others
+
+- **`flow-efficiency`**: Modig and Åhlström's strategic frame. Read it for the why; this skill gives the
+  how-much.
+- **`kanban`**: puts WIP limits, classes of service, cadences and flow metrics into practice.
+- **`continuous-delivery`**: lowers transaction cost so small batches become economic (B12, B19).
+- **`splitting-user-stories`**: makes the batches smaller.
+- **`value-stream-mapping`**: finds where work waits before you price the queue.
+- **`toyota-way`** and **`toyota-kata`**: the management system and the improvement routine.
+- **`systems-thinking-iceberg`**: when the queue is a symptom of a structure or a mental model.
+
+---
+
+## Quick checklist
+
+- [ ] Can I put a rough cost of delay on the options, in money per week?
+- [ ] Which queues does this decision lengthen or shorten, including decision queues?
+- [ ] Am I steering by queue size or by cycle time after the fact?
+- [ ] How busy are the people involved? Above about 80%, small surprises cause long waits.
+- [ ] What batch size does this choose, and can transaction cost come down first?
+- [ ] How is the work sequenced, and does duration count?
+- [ ] Are urgent and planned work in one priority order, with differential service?
+- [ ] Who decides, how quickly, and does the decision age badly if it waits?
 
 ---
 
 ## Reading
 
-- **Don Reinertsen**, *The Principles of Product Development Flow* (Celeritas, 2009) — the book. Dense, every chapter rewards re-reading.
-- **Don Reinertsen**, *Managing the Design Factory* (Free Press, 1997) — the precursor; many of the ideas in less rigorous form.
-- **Niklas Modig & Pär Åhlström**, *This is Lean* (Rheologica, 2012) — the strategic complement. See the `flow-efficiency` skill.
-- **Mary & Tom Poppendieck**, *Lean Software Development* (2003) — the software-specific adaptation. See the `lean-software-development` skill.
-- **Joshua Arnold & Özlem Yüce**, *Black Swan Farming* (essays / case studies) — practical CD3 / Cost-of-Delay application.
-- **Eliyahu Goldratt**, *The Goal* (1984) — the prerequisite intuition for theme 2 (bottlenecks).
-- **Daniel Vacanti**, *Actionable Agile Metrics for Predictability* (2015) — practical implementation of Little's Law and percentile-based forecasting.
-- **John Boyd**, OODA loop writing — the doctrine of fast feedback that Reinertsen builds on for theme 6.
+- **Donald G. Reinertsen**, *The Principles of Product Development Flow: Second Generation Lean Product
+  Development* (Celeritas, 2009). The source.
+- **Donald G. Reinertsen**, *Managing the Design Factory* (Free Press, 1997). The precursor.
+- **Reinertsen**, "Understanding the Magic of Lean Product Development", QCon San Francisco 2011
+  slides. Cadence bounding waiting time, queueing disciplines and the "TPS emergency room".
+- **Betsy Beyer et al.**, *Site Reliability Engineering* (O'Reilly, 2016), chapter 29, "Dealing with
+  Interrupts", and the ;login: article on ticket rotations (winter 2016).
+- **Kenneth S. Rubin**, "Can a Scrum Team Handle Both Plan-Driven and Interrupt-Driven Work?"
+  (innolution.com).
+- **Craig Larman and Bas Vodde**, LeSS, on the number of backlogs (less.works).
+- **Kanban University**, *The Official Kanban Guide* glossary: class-of-service archetypes.
+- **Daniel Vacanti**, *Actionable Agile Metrics for Predictability* (2015): Little's law and forecasting
+  in practice.
+- **Joshua Arnold and Özlem Yüce**, Black Swan Farming: cost of delay case studies.

@@ -1,6 +1,6 @@
 ---
 name: pr-writer
-description: Write, scope, size, and review pull requests that are fast and safe to review and merge. Grounded in Google's Engineering Practices (small CLs, CL descriptions, the reviewer standard & speed), GitHub's PR guidance, the SmartBear/Cisco code-review study (defect detection vs PR size), Conventional Commits, and modern delivery practice (expand/contract migrations, feature flags, observability gates, breaking-change discipline). Covers PR scope & splitting, the size band, Conventional-Commit titles, a stand-alone description template (what/why · changes · contracts crossed · testing · observability · risk & rollback · review focus · deferred), the author self-review checklist, CI/safety gates, anti-patterns, and how to handle review comments. Use when opening or describing a PR, deciding whether a change is one PR or several, sizing or splitting a large diff, writing a PR description or template, or before requesting review.
+description: Write, scope, size, and review pull requests that are fast and safe to review and merge. Grounded in Google's Engineering Practices, GitHub's PR guidance, the SmartBear/Cisco review study, Conventional Commits, LLVM's AI tool policy and agentic-PR research, plus delivery practice (expand/contract migrations, flags, observability gates). Covers splitting and sizing, Conventional-Commit titles, a stand-alone description (what/why, Mermaid diagrams of only what changed: Example Mapping for a policy, Event Storming for a process, sequence for an interaction, contracts crossed, confidence card, testing, observability, risk and rollback, review focus, deferred), disclosing AI-assisted PRs with a human sign-off, the self-review checklist, CI gates, anti-patterns and handling review comments. Use when opening or describing a PR, splitting a large diff, writing a PR template, adding a diagram to a PR, or before requesting review.
 ---
 
 # Writing Pull Requests
@@ -73,17 +73,96 @@ A reviewer reads a PR as *edges crossed*, not lines added. List, explicitly (or 
 - **Events / schemas** — never mutate or remove a field on an existing event (it's immutable history); add a new versioned event. 
 - **Database migrations** — see §5.
 
-### Show the change in the smallest picture that makes it clear
+### Show the change in small diagrams of what changed
 
-Before the prose, give the reviewer the shape of the change. Pick the smallest view that carries the point, and only the parts that matter:
+Before the prose, give the reviewer the shape of the change: **a diagram scoped to what this PR changes, with the changed part highlighted.** GitHub renders Mermaid natively in PR descriptions and comments (a fenced block tagged `mermaid`), so it costs the reviewer nothing to open.
 
-- **Logic** — a few lines of pseudocode.
-- **Control flow** — a call tree, or a `diff` of the call tree when only part of it changes.
-- **Layout or a broad refactor** — a shallow file tree, or a `diff` of it.
-- **Interaction between components** — a Mermaid sequence diagram.
-- **A new shape a reader must copy** — the code block itself.
+Pick the diagram by what the change is about:
 
-One or two of these is usually enough. A picture that needs its own explanation is the wrong picture.
+| The change is about… | Diagram | Recipe |
+|---|---|---|
+| **A policy or business rule**: who may, when, what wins, what doesn't apply | **Example Mapping**: story, rules, examples that apply and don't, open questions | below |
+| **A process** across steps, actors or services: what happens in order, who decides, what reacts | **Event Storming** (process level) on one straight line | below |
+| How components or services talk (calls, events, async steps) | Mermaid **sequence** diagram | template in §7 |
+| The logic of one path (a guard, a branch) | **sequence** with a highlighted note, or a small **flowchart** | template in §7 |
+| Part of an existing call flow | a `diff`-coloured call tree (the `pr-flow` skill traces it from the entry point) | — |
+| Layout or a broad refactor | a shallow file tree, or a `diff` of it | — |
+| A new shape a reader must copy | the code block itself | — |
+
+**One or more.** Use one diagram when one view carries the change, and more when the change has more than one face. Example: a fix that changes a rule *inside* a process gets an Event Storming line for where it happens and an Example Map for what the rule now says. Give each diagram a one-line caption naming the question it answers ("Where in the booking does this happen?", "What does the rule now say?"). Stop at three; past that, the PR is probably doing too much (§1).
+
+Make each a picture of **the change**, not of the system:
+
+- **Highlight the changed step.** In a sequence diagram, wrap it in `rect rgba(46, 160, 67, 0.18) … end`; the translucent green reads in both light and dark mode. Put **before/after** inside one note on that step: `Note over X: before: …<br/>after: …`.
+- **Say so in one line above it:** "The highlighted step is the only behaviour this PR changes."
+- **Keep it small:** 3–4 participants and about 10 messages. Use the prod case or ticket example's own names (guest G, registered R) so it matches the root-cause paragraph.
+- **List what does *not* happen under the diagram** (the guard arms) in one sentence rather than drawing every branch.
+
+Mermaid on GitHub has sharp edges:
+
+- **`;` ends a statement**, even inside a note or message label. Write "so" or "," instead.
+- GitHub **pins its Mermaid version**, so newer syntax may not render. A `mermaid` block containing only `info` shows the version.
+- **Render it before publishing:** paste it into the Mermaid live editor, or a local page that loads Mermaid from a CDN. A diagram that fails to parse shows reviewers a syntax error instead of your change.
+- **Regenerate it on every push that changes behaviour.** A stale diagram is a confident wrong claim about the diff.
+
+#### Recipe: Example Mapping for a policy or rule
+
+Yellow story, blue rules, green examples where the rule applies, pink where it does not, grey open questions (Matt Wynne's colours). Take the examples from the team's Example Mapping board when one exists, verbatim, and name the tests after them, so the PR, the board and the test names say the same thing.
+
+```mermaid
+flowchart TB
+    S["Story: a guest who types a registered customer's email can pay"]:::story
+    S --> R1["Rule: Terms count if any account in the draft's history accepted"]:::rule
+    S --> R2["Rule: nothing is written to the registered account"]:::rule
+    R1 --> E1["Guest G accepted, the email moved the draft to R → Pay offered"]:::applies
+    R1 --> E2["Neither G nor R accepted → Terms stays open"]:::notApplies
+    R2 --> E3["G pays, R still has not accepted → R is asked once when signed in"]:::applies
+    S --> Q1["May a guest's acceptance count for R's booking? Legal to answer"]:::question
+    classDef story fill:#fff3bf,stroke:#af7e04,color:#1a1a1a
+    classDef rule fill:#a5d8ff,stroke:#1c7ed6,color:#1a1a1a
+    classDef applies fill:#b2f2bb,stroke:#2f9e44,color:#1a1a1a
+    classDef notApplies fill:#ffc9c9,stroke:#e03131,color:#1a1a1a
+    classDef question fill:#dee2e6,stroke:#868e96,color:#1a1a1a
+```
+
+Only the rules this PR adds or changes, with two or three examples each. An open question that blocks merge goes in grey here *and* as *Not confirmed* in the confidence card.
+
+#### Recipe: Event Storming for a process
+
+A process-level storm on **one straight line**, never a grid: command → system or aggregate → event → policy → next command. Orange events (past tense), blue commands, lilac policies ("whenever X → Y"), yellow aggregate or process, pink external systems, small pale-yellow actors joined by a dotted line. **Outline the changed sticky** in green rather than drawing a second line.
+
+```mermaid
+flowchart LR
+    C1["save the billing contact"]:::command --> S1["Olive"]:::system --> E1["Draft's account set to registered R"]:::event --> P1["whenever a draft is saved → work out its actions"]:::policy --> A1["Draft Shipment Progress"]:::aggregate --> E2["Terms done: an account in the history accepted"]:::event --> E3["Pay offered"]:::event
+    U1(["Guest"]):::actor -.-> C1
+    style E2 stroke:#2da44e,stroke-width:4px
+    classDef event fill:#ffc078,stroke:#e8590c,color:#1a1a1a
+    classDef command fill:#a5d8ff,stroke:#1c7ed6,color:#1a1a1a
+    classDef policy fill:#d0bfff,stroke:#7048e8,color:#1a1a1a
+    classDef aggregate fill:#ffec99,stroke:#f08c00,color:#1a1a1a
+    classDef system fill:#fcc2d7,stroke:#d6336c,color:#1a1a1a
+    classDef actor fill:#fff9db,stroke:#f08c00,color:#1a1a1a
+```
+
+Show the stretch of the process around the change, about 6–8 stickies, not the whole storm. Link the full board (Miro, FigJam) under the diagram. Hot spots stay on the board; in the PR they become *Not confirmed* assumptions or Deferred items.
+
+Both recipes set their own fill **and** text colours, so they read in light and dark mode. Quote every label (`["…"]`) so brackets, colons and arrows inside the text don't break the parser.
+
+The evidence that diagrams speed up review is thin: small, pre-LLM studies of perceived benefit (ReviewVis, Striffs). Use a diagram because it makes the change cheaper to understand at a glance, and keep it honest and small. A picture that needs its own explanation is the wrong picture.
+
+### AI-assisted PRs: disclose, sign off, show the reasoning
+
+When an agent wrote the code, the tests or the description, say so and show how it reasoned. In a matched study of Claude Code PRs, agent PRs were merged less often than the same authors' human PRs (83.8% vs 91.0%, Watanabe et al., TOSEM). Reviewers lacked the reasoning, not the result. LLVM's AI policy sets the norms that close that gap:
+
+- **Disclose it at the top**, and in commits (`Assisted-by:` or `Co-Authored-By:` trailer). Labelling is there to make review easier, not to apologise.
+- **A human reads every line before requesting review** and can answer for it. The contributor is the author and is accountable. Put an unticked box in the PR for the author to tick; never tick it on their behalf.
+- **Add a confidence card**:
+  - **Plan**: the steps taken, such as the failing test first, then the fix, then the review.
+  - **Assumptions**: each marked *Checked* (with the evidence) or *Not confirmed* (with who must answer, in bold if it blocks merge).
+  - **Alternatives considered**: one clause each on why not.
+  - **Edge cases**: what happens at each boundary, including what deliberately does *not* happen.
+
+The confidence card replaces a loose "decision worth a second look" paragraph. Unconfirmed assumptions are exactly what the reviewer should challenge.
 
 ### Merge danger: which door, and how wide the blast
 
@@ -118,26 +197,61 @@ A bold **`BREAKING CHANGE:`** block at the top: what breaks, who is affected, an
 - [ ] The change is **observable**; the description says how we'll know it broke.
 - [ ] **Full CI suite is green**; build warning-clean.
 - [ ] Title + description **stand alone**; ticket linked; "where to look" pointer for any non-trivial diff.
+- [ ] Each **diagram shows only what changed** (Example Map for a rule, Event Storming line for a process, sequence for an interaction), the changed part is highlighted, each has a one-line caption, and each **renders** (no `;` inside labels, quoted node labels) and matches HEAD.
+- [ ] If an agent helped: **disclosed** at the top and in commit trailers; a **human has read every line** (the author ticks the box); the **confidence card** marks each assumption *Checked* or *Not confirmed*.
 
 ---
 
 ## 7. The PR description template
 
-```markdown
+````markdown
+> **AI-assisted.** <!-- delete if no agent helped --> Written with <tool/model>: <code, tests, this description>. Commits carry a `Co-Authored-By` trailer.
+> - [ ] The author has read the full diff and can answer for every line *(tick before requesting review)*
+
 ## What & Why
 <!-- One imperative sentence: what changes for the caller/user and why now. Matches the PR title. -->
 
-Closes: <!-- TICKET-NNN / #NNN -->
+Closes: <!-- TICKET-NNN / #NNN --> · Stack: <!-- "1 of 3 → #NNN", if stacked -->
 
-## Changes
-<!-- Prose summary of the net change — NOT a commit-log dump.
-     Call out the design decision worth flagging and the alternative not taken. -->
+## What changes
+<!-- One diagram per question this change raises, at most three (§4):
+     a policy → Example Map · a process → Event Storming line · an interaction → sequence (below).
+     Caption each with the question it answers. -->
+
+The highlighted step is the only behaviour this PR changes.
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Service as <the service this PR changes>
+    participant Upstream as <the collaborator involved>
+    User->>Service: <the request that reaches the changed code>
+    Service->>Upstream: <the call, if any>
+    Upstream-->>Service: <what comes back>
+    rect rgba(46, 160, 67, 0.18)
+        Note over Service: <the changed step><br/>before: <old behaviour><br/>after: <new behaviour>
+    end
+    Service-->>User: <what the user now gets>
+```
+
+<!-- One sentence on what deliberately does NOT happen (the guard arms). -->
+
+**Root cause** (fix) / **why now** (feature): <!-- the concrete case: ids, timestamps, the evidence link -->
 
 **Contracts crossed** (or "none"):
 - Inbound route(s): <!-- e.g. POST v1/resource/{id}/action (additive, versioned) -->
 - Outbound call(s): <!-- service + endpoint; auth + resilience wired? retry-safe if mutating? -->
 - Config keys added/renamed: <!-- key → per-env value; out-of-repo sources updated? -->
 - Events / schema / migrations: <!-- new versioned event? expand/contract migration? or "none" -->
+
+## Confidence card
+- **Plan.** <!-- the steps taken: failing test → fix → refactor → review → fixes -->
+- **Assumptions**
+  - <!-- assumption --> *Checked:* <!-- evidence -->
+  - <!-- assumption --> *Not confirmed:* <!-- **who must answer before merge** -->
+- **Alternatives considered:** <!-- option (why not); option (why not) -->
+- **Edge cases**
+  - <!-- boundary → what happens, including what deliberately doesn't -->
 
 ## Testing
 - [ ] Full CI suite green (incl. integration/container tests) — link: <!-- run -->
@@ -168,7 +282,7 @@ Edge cases & intentional best-effort behaviour:
 
 ## Deferred / fast-follow
 <!-- What was deliberately left out, why it's safe to ship without it, linked ticket. -->
-```
+````
 
 Keep it lean — delete sections that are genuinely N/A rather than filling them with noise. A repo-level `.github/pull_request_template.md` makes this the default for every PR.
 
@@ -189,6 +303,11 @@ Keep it lean — delete sections that are genuinely N/A rather than filling them
 - **Drive-by working-tree files** — a local-only SDK pin, scratch docs — that break CI or every teammate's build.
 - **"It passed locally" as the merge gate** for behaviour behind a mocked external boundary. Any red/skipped test, or a build with suppressed warnings.
 - **A stale narrative** — a PR story (or committed WIP doc) describing behaviour the HEAD no longer has.
+- **A diagram of the whole system** instead of the change, or one with every branch drawn — the reviewer has to find the change in it. Highlight one step; list the guard arms in a sentence.
+- **The wrong picture for the change** — a sequence diagram for a policy change (the rule hides in a note) or for a multi-step process (no actors, no policies). Use an Example Map for a rule, an Event Storming line for a process.
+- **A diagram zoo** — four or more pictures, or two that answer the same question. One diagram per question; past three, split the PR.
+- **A diagram that doesn't render or no longer matches HEAD** — a syntax error box, or a flow the last push changed. Render it before publishing; regenerate it on push.
+- **An unlabelled agent PR, or one nobody human has read** — reviewers can't calibrate their trust, and the author can't answer for the lines. Disclose, sign off, add the confidence card.
 - **Comments added to production code** to explain non-obvious logic instead of making the code self-documenting and putting the *why* in the PR description or a test.
 - **Reviewer perfectionism** — blocking a net-improvement over imagined-future concerns, or letting a PR stall on unanswered nits instead of approving-with-nits or escalating.
 
@@ -212,4 +331,7 @@ Keep it lean — delete sections that are genuinely N/A rather than filling them
 - **SmartBear / Cisco** — *Best Practices for Peer Code Review* and the Cisco case study (defect detection vs review size/speed).
 - **Conventional Commits 1.0.0** — conventionalcommits.org.
 - **Empirical** — Bacchelli & Bird, *Modern Code Review* (MSR); Zhang et al., *Pull Request Latency* (ESE 2022); "Do small code changes merge faster?" (arXiv 2203.05045); LinearB engineering benchmarks.
+- **AI-assisted PRs** — Watanabe et al., *On the Use of Agentic Coding: An Empirical Study of Pull Requests on GitHub* (ACM TOSEM; arXiv 2509.14745), the merge-rate gap and the confidence-card proposal; *LLVM AI Tool Use Policy* (llvm.org, `AIToolPolicy`), disclosure, human-in-the-loop and accountability.
+- **Example Mapping** — Matt Wynne, *Introducing Example Mapping* (Cucumber blog, 2015). **Event Storming** — Alberto Brandolini, *Introducing EventStorming* (process-modelling level).
+- **Diagrams in review** — GitHub Docs, *Creating diagrams* (Mermaid in Markdown, pinned version); Fregnan et al., *ReviewVis* (JSS 2023) and Fadhel & Sekerinski, *Striffs* (ICCQ 2021), perceived benefit and keeping structure diffs small; CodeRabbit walkthrough and Bito interaction-diagram docs, sequence diagrams only when interactions change, updated on each push.
 - **Delivery & safety** — expand/contract migrations (Prisma DataGuide); rollback strategies (Octopus); feature-flag practices (Octopus); pipeline quality gates (InfoQ); breaking-change discipline (InfoQ, semver); observability-driven development (Charity Majors).
