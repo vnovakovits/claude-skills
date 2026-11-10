@@ -79,6 +79,24 @@ var fulcrumPoint = Complex.FromRealNumber(23.0);
 
 **The Stepdown Rule.** Code should read top-down. Each function is followed by functions at the next-lower level of abstraction.
 
+**Order methods in call order.** Put the method a reader meets first (the public entry point) at the top. Below it, put the methods it calls, in the order it calls them, each one followed by its own helpers before the next sibling (depth-first). A helper used in several places goes right after the first method that calls it. The reader then reads the file once, top to bottom, and never scrolls up to find a definition.
+
+```csharp
+internal static async Task<TermsAccepted> FactFor(...)                    // 1. entry point
+{
+    var acceptedBy = await AcceptedByThisOrTheOriginalAccount(...);       //    calls 2
+    TraceWhoAccepted(acceptedBy, requested);                              //    calls 5
+    return new TermsAccepted(acceptedBy is not null);
+}
+private static async Task<AccountId?> AcceptedByThisOrTheOriginalAccount(...) =>   // 2.
+    AcceptedBy(current) ?? await AcceptedByTheOriginal(...);              //    calls 3, then 4
+private static AccountId? AcceptedBy(AccountState account) => ...         // 3.
+private static async Task<AccountId?> AcceptedByTheOriginal(...) => ...   // 4. (also calls 3)
+private static void TraceWhoAccepted(...) { ... }                         // 5.
+```
+
+Apply it to code you write or rewrite. Don't reorder untouched methods in a file you are only passing through, because that makes the diff noisy.
+
 **Switch statements** are unavoidable but should be buried in a low-level factory and never repeated. Prefer polymorphism for behavior selection.
 
 **Descriptive names.** Long descriptive beats short cryptic. `IncludeSetupAndTeardownPages` over `Include`. Be consistent.
@@ -158,7 +176,7 @@ Circle MakeCircle(Point center, double radius);
 
 **Vertical distance.** Concepts that are conceptually close should stay close. Don't force readers to hop between files.
 - **Variable declarations** near their use. Loop counters inside the `for`. Instance variables at the top of the class.
-- **Dependent functions**: caller above callee when possible.
+- **Dependent functions**: caller above callee, in call order (see *Order methods in call order*).
 - **Conceptual affinity**: similar functions near each other.
 
 **Horizontal formatting.** Aim for 80–120 chars per line.
@@ -450,5 +468,5 @@ When writing or reviewing code, ask:
 - [ ] Does each class have one reason to change (SRP)?
 - [ ] Are tests F.I.R.S.T and readable as specifications?
 - [ ] Have I deleted dead code, commented-out code, and noise comments?
-- [ ] Does the code read top-to-bottom like a narrative (Stepdown Rule)?
+- [ ] Does the code read top-to-bottom like a narrative (Stepdown Rule), with methods in the order they are called?
 - [ ] Have I left this file cleaner than I found it?
