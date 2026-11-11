@@ -90,6 +90,7 @@ Examples:
 | "Design a new endpoint for X." | `api-design` |
 | "Split this story." | `splitting-user-stories` |
 | "Write a bug report ticket." | `ticket-writer` |
+| "What should QA test now that this merged?" | `qa-handoff` |
 | "Make this PR description shorter and clearer." | `elements-of-style` |
 | "Why is this test brittle?" | `unit-testing-principles` |
 | "Set up a Kanban board." | `kanban`, often with `make-work-visible` |
@@ -182,6 +183,7 @@ All skills live under [`plugins/engineering-practices/skills/`](plugins/engineer
 | --- | --- |
 | [`continuous-delivery`](plugins/engineering-practices/skills/continuous-delivery/SKILL.md) | Designing pipelines, branching, deploys, DORA metrics (Humble & Farley). |
 | [`pr-writer`](plugins/engineering-practices/skills/pr-writer/SKILL.md) | Writing, scoping, and sizing pull requests that are fast to review — small CLs, Conventional-Commit titles, stand-alone descriptions with one Mermaid diagram of only what changed, and AI-assisted PRs disclosed with a human sign-off and a confidence card (Google eng-practices, GitHub, SmartBear, LLVM). |
+| [`qa-handoff`](plugins/engineering-practices/skills/qa-handoff/SKILL.md) | Updating a ticket after a change ships and telling QA what to test — verified merge/release/deploy facts, the domain change as a plain-words rule, and user journeys with expected outcomes and what to report. |
 | [`two-axis-code-review`](plugins/engineering-practices/skills/two-axis-code-review/SKILL.md) | Reviewing a branch or PR on two separate axes — the repository's written standards plus Fowler's smells, and conformance to the ticket or spec — with every finding verified and the two never merged into one ranking (Boehm's verification vs validation). |
 | [`kanban`](plugins/engineering-practices/skills/kanban/SKILL.md) | Setting up boards, WIP limits, flow metrics (Hammarberg & Sundén, Anderson, Leopold). |
 | [`lean-software-development`](plugins/engineering-practices/skills/lean-software-development/SKILL.md) | Mary & Tom Poppendieck's seven principles — eliminate waste, amplify learning, see the whole. |
