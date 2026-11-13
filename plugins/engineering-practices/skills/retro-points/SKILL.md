@@ -1,6 +1,6 @@
 ---
 name: retro-points
-description: Turn a discussion into retrospective points for a team's daily retro. Called on the current conversation, a pasted thread, a file, or a ticket or PR, it finds what slowed the team down, traces each item from event to pattern to the structure and belief behind it, names the system archetype, proposes one structural experiment per pattern, scores it for impact, and recommends what the retro should open with. Built on Kerth's Prime Directive, Derby & Larsen's phases, Toyota Kata's daily improvement cycle, a multi-branch 5 Whys repaired with Allspaw's "how" questions and stopping rules, the systems-thinking iceberg, archetypes and causal loops, Meadows' leverage points, and Leopold's blocker clustering. Also covers running the 12-minute daily retro, the impact scorecard, the experiment card and the weekly review. Use when the user runs /retro-points, says "retro points", "what should we bring to the retro", "5 whys this", "what slowed us down", "why does this keep happening", or when retro actions never land. For improving a coding agent's own environment after a session, use agent-retro instead.
+description: Turn a discussion into retrospective points for a team's daily retro. Called on the current conversation, a pasted thread, a file, or a ticket or PR, it finds what slowed the team down, traces each item from event to pattern to the structure and belief behind it, names the system archetype, runs the systems-thinking iceberg on recurring points, proposes one structural experiment per pattern, scores it for impact, and recommends what the retro should open with. Built on Kerth's Prime Directive, Derby & Larsen's phases, Toyota Kata's daily improvement cycle, a multi-branch 5 Whys repaired with Allspaw's "how" questions and stopping rules, the systems-thinking iceberg, archetypes and causal loops, Meadows' leverage points, and Leopold's blocker clustering. Also covers running the 12-minute daily retro, the impact scorecard, the experiment card and the weekly review. Use when the user runs /retro-points, says "retro points", "what should we bring to the retro", "5 whys this", "what slowed us down", "why does this keep happening", or when retro actions never land. For improving a coding agent's own environment after a session, use agent-retro instead.
 ---
 
 # Retro Points
@@ -28,7 +28,15 @@ Read the whole discussion before writing. Gather evidence: ticket and PR numbers
    - *Candidate experiment:* one structural change, phrased so it can be tested.
    - *Score:* the impact scorecard total, out of 16.
 2. **Suggested order:** which point the retro should open with and why (highest score on the binding flow), the cheapest high scorer next, and which points need another team, so they go to the weekly review.
-3. **Experiment card** for the top point, filled in as far as the discussion allows.
+3. **Iceberg, when applicable.** For each point that qualifies, load the `systems-thinking-iceberg` skill with the Skill tool and build its iceberg for that point: events, patterns, structures, mental models, the archetype loop, and the leverage point the experiment acts on. Use that skill's output template, or its drawn iceberg when the result goes to a page people will look at. Do at most two, starting with the top point.
+
+   A point qualifies when any of these holds:
+   - it recurs: two or more events in the discussion, or the discussion says it happened before;
+   - its archetype is a feedback trap (fixes that fail, shifting the burden, eroding goals, limits to growth);
+   - the discussion asks "why does this keep happening" or proposes a fix that acts only on the event.
+
+   Skip it for one-off events; say "one-off, no iceberg" next to them. If the iceberg changes the structure or the experiment, update the table row to match.
+4. **Experiment card** for the top point, filled in as far as the discussion allows.
 
 **Rules for the points:**
 - Friction counts whatever its kind: waits, rework, wrong assumptions, late review findings, environment and tooling gaps, handoffs, unclear tickets, cross-team dependencies.
@@ -89,7 +97,7 @@ Each layer below depends on the one before. A retro that skips one degrades in a
 
 #### Below the waterline
 
-Use the `systems-thinking-iceberg` skill for the full method. In a retro, one question per level is enough:
+For a point that qualifies (see "When invoked"), run the `systems-thinking-iceberg` skill in full. In the live retro, one question per level is enough:
 
 | Level | Question | Action mode |
 |---|---|---|
