@@ -16,7 +16,7 @@ Apply this skill when it is not obvious which practice fits, or when a piece of 
 3. **Plan the work** — `to-tickets` for a dependency graph of thin end-to-end tickets; `ticket-writer` for each ticket's content. A single small change can skip straight to step 4.
 4. **Build it test-first** — `test-driven-development`, with `unit-testing-principles` for what makes a test worth keeping, `test-data-patterns` for arranging test data, and `art-of-unit-testing` or `xunit-test-patterns` for naming, doubles and test smells.
 5. **Keep the design clean as you go** — `tidy-first` for small structural changes ahead of behaviour changes, `refactoring` for named moves.
-6. **Review** — `two-axis-code-review`: standards and spec, reported separately.
+6. **Review** — `two-axis-code-review`: standards and spec, reported separately; `peer-review` for design, craft and test feedback written as line comments.
 7. **Ship** — `pr-writer` for the pull request, `continuous-delivery` for the pipeline and release practices, `observability` so you can tell it works in production.
 8. **Learn** — `agent-retro` after an agent session that went sideways; `architecture-decision-records` for any hard-to-reverse decision made along the way.
 
@@ -92,6 +92,7 @@ Apply this skill when it is not obvious which practice fits, or when a piece of 
 | `grilling` / `example-mapping` | open decisions across a plan or design | the rules of one story |
 | `grilling` / `teaching` | sharpening the user's own decisions | building the user's understanding of something |
 | `two-axis-code-review` / `pr-writer` | reviewing someone's change | presenting your own |
+| `two-axis-code-review` / `peer-review` | checking a change against the written standards and its ticket | design, craft and test feedback as line comments to a colleague |
 | `debugging` / `working-effectively-with-legacy-code` | something is broken and you need the cause | the code works but must change and has no tests |
 | `philosophy-of-software-design` / `fractal-architecture` | the cost of an interface relative to what it hides | whether a unit fits in working memory |
 | `kanban` / `flow-efficiency` | setting up and running the system | explaining why utilisation is the wrong goal |
