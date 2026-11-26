@@ -1,6 +1,6 @@
 ---
 name: pr-writer
-description: Write, scope, size, and review pull requests that are fast and safe to review and merge. Grounded in Google's Engineering Practices, GitHub's PR guidance, the SmartBear/Cisco review study, Conventional Commits, LLVM's AI tool policy and agentic-PR research, plus delivery practice (expand/contract migrations, flags, observability gates). Covers splitting and sizing, Conventional-Commit titles, a stand-alone description (what/why, Mermaid diagrams of only what changed: Example Mapping for a policy, Event Storming for a process, sequence for an interaction, contracts crossed, confidence card, testing, observability, risk and rollback, review focus, deferred), disclosing AI-assisted PRs with a human sign-off, the self-review checklist, CI gates, anti-patterns and handling review comments. Use when opening or describing a PR, splitting a large diff, writing a PR template, adding a diagram to a PR, or before requesting review.
+description: Write, scope, size, and review pull requests that are fast and safe to review and merge. Grounded in Google's Engineering Practices, GitHub's PR guidance, the SmartBear/Cisco review study, Conventional Commits, LLVM's AI tool policy and agentic-PR research, plus delivery practice (expand/contract migrations, flags, observability gates). Covers splitting and sizing, Conventional-Commit titles, a lean stand-alone description a reviewer reads in about three minutes (what/why, Mermaid diagrams of only what changed: Example Mapping for a policy, Event Storming for a process, sequence for an interaction, contracts crossed, confidence card, testing, observability, risk and rollback, review focus, deferred), disclosing AI-assisted PRs with a human sign-off, the self-review checklist, CI gates, anti-patterns and handling review comments. Use when opening or describing a PR, splitting a large diff, writing a PR template, adding a diagram to a PR, or before requesting review.
 ---
 
 # Writing Pull Requests
@@ -61,6 +61,20 @@ The empirical backbone (SmartBear/Cisco study of ~2,500 reviews over 3.2M LOC): 
 A reviewer (and a future archaeologist) should learn **what changed, why now, and the design decision worth a second look** without opening the diff or the ticket. Write **prose**, not a commit dump.
 
 Structure around **What/Why · Changes · Testing · Risk & rollback**, plus the edges below. Explain the **root cause** (for a fix) and the **decision + the alternative not taken** (for a feature) — not the obvious.
+
+### Keep it lean: a three-minute read
+
+A description nobody finishes protects nobody. Aim for **under about 1,000 words**, diagram and template included. Past that, cut. If it still will not fit, the PR is probably two PRs (§1).
+
+- **Point first.** Open each section with its conclusion. A reviewer who reads only the first line of every section should still get the story.
+- **One fact, one place.** State each edge case, outcome or number once and point to it from elsewhere ("tests cover each edge case above"). Repeating a fact in three sections triples the reading and invites the copies to drift.
+- **One line per item, same shape down the list.** Assumption: claim, then the check. Alternative: option, then why not. Edge case: case → outcome. If an item needs a paragraph, it is a section or it does not belong.
+- **Say what the reviewer cannot see in the diff.** Leave out file names the diff already lists, behaviour that did not change, and sections that do not apply.
+- **Leave out the journey.** Review rounds, commands run and dead ends belong in the commits and the review thread. The plan is one sentence.
+- **Separate cause from evidence.** Root cause in three or four sentences. Evidence (ids, timestamps, the Sentry or trace link) in its own short paragraph.
+- **Cut once more before publishing.** Do an `elements-of-style` pass and expect to remove a quarter to a third. On every later push, trim what the new commits made untrue or redundant as well as adding what is new.
+
+Lean is not cryptic: never cut a contract edge, an unconfirmed assumption, a risk or a deferred item to save words.
 
 ### Enumerate every contract edge the change crosses
 
@@ -156,13 +170,13 @@ When an agent wrote the code, the tests or the description, say so and show how 
 
 - **Disclose it at the top**, and in commits (`Assisted-by:` or `Co-Authored-By:` trailer). Labelling is there to make review easier, not to apologise.
 - **A human reads every line before requesting review** and can answer for it. The contributor is the author and is accountable. Put an unticked box in the PR for the author to tick; never tick it on their behalf.
-- **Add a confidence card**:
-  - **Plan**: the steps taken, such as the failing test first, then the fix, then the review.
-  - **Assumptions**: each marked *Checked* (with the evidence) or *Not confirmed* (with who must answer, in bold if it blocks merge).
-  - **Alternatives considered**: one clause each on why not.
-  - **Edge cases**: what happens at each boundary, including what deliberately does *not* happen.
+- **Add a confidence card**, one line per item:
+  - **Plan**: one sentence, such as "failing test for the prod sequence, then the fix, then two review rounds".
+  - **Assumptions**: only those the change rests on, usually three to five. Each is a claim, then *Checked:* with the evidence in a clause, or *Not confirmed:* with who must answer (in bold if it blocks merge).
+  - **Alternatives not taken**: one bullet each, the option then why not.
+  - **Edge cases**: `case → outcome`, including what deliberately does *not* happen. List them here once. Testing then says "tests cover each edge case above" and names any that are not covered.
 
-The confidence card replaces a loose "decision worth a second look" paragraph. Unconfirmed assumptions are exactly what the reviewer should challenge.
+The confidence card replaces a loose "decision worth a second look" paragraph. Unconfirmed assumptions are exactly what the reviewer should challenge, so keep the card short enough that they stand out. A card longer than about 150 words is hiding them.
 
 ### Merge danger: which door, and how wide the blast
 
@@ -197,6 +211,7 @@ A bold **`BREAKING CHANGE:`** block at the top: what breaks, who is affected, an
 - [ ] The change is **observable**; the description says how we'll know it broke.
 - [ ] **Full CI suite is green**; build warning-clean.
 - [ ] Title + description **stand alone**; ticket linked; "where to look" pointer for any non-trivial diff.
+- [ ] The description is **lean**: under about 1,000 words, the point first in each section, no fact stated twice, one line per list item, and an `elements-of-style` pass done.
 - [ ] Each **diagram shows only what changed** (Example Map for a rule, Event Storming line for a process, sequence for an interaction), the changed part is highlighted, each has a one-line caption, and each **renders** (no `;` inside labels, quoted node labels) and matches HEAD.
 - [ ] If an agent helped: **disclosed** at the top and in commit trailers; a **human has read every line** (the author ticks the box); the **confidence card** marks each assumption *Checked* or *Not confirmed*.
 
@@ -245,27 +260,30 @@ sequenceDiagram
 - Events / schema / migrations: <!-- new versioned event? expand/contract migration? or "none" -->
 
 ## Confidence card
-- **Plan.** <!-- the steps taken: failing test → fix → refactor → review → fixes -->
-- **Assumptions**
-  - <!-- assumption --> *Checked:* <!-- evidence -->
-  - <!-- assumption --> *Not confirmed:* <!-- **who must answer before merge** -->
-- **Alternatives considered:** <!-- option (why not); option (why not) -->
-- **Edge cases**
-  - <!-- boundary → what happens, including what deliberately doesn't -->
+<!-- One line per item. Keep the whole card under about 150 words. -->
+
+**Plan.** <!-- one sentence: failing test → fix → review rounds -->
+
+**Assumptions**
+- <!-- claim. --> *Checked:* <!-- the evidence, in a clause -->
+- <!-- claim. --> *Not confirmed:* <!-- **who must answer before merge** -->
+
+**Alternatives not taken**
+- <!-- option: why not -->
+
+**Edge cases**
+- <!-- case → outcome, including what deliberately doesn't happen; name any best-effort choice and its reason -->
 
 ## Testing
-- [ ] Full CI suite green (incl. integration/container tests) — link: <!-- run -->
-- [ ] New tests cover every new outcome/branch (happy path AND each failure arm)
+- [ ] Full CI suite green (incl. integration/container tests) on <!-- commit --> — link: <!-- run -->
+- [ ] Tests cover each edge case above <!-- name any that are not covered -->
 - [ ] Contract test pins the real upstream wire shape (if a new boundary)
-- [ ] Manual / staging validation: <!-- what, where, which edge cases -->
-
-Edge cases & intentional best-effort behaviour:
-<!-- empty/null, duplicates, ordering, ties, partial records, stale upstream data;
-     name any deliberately lossy choice + one-line rationale -->
+- [ ] Manual / staging validation: <!-- the steps, in one line -->
 
 ## Observability
-<!-- Wide event name + key fields; span tags / outcome bucket a responder would group by.
-     How will we know this broke in prod without shipping new code? -->
+<!-- New span attributes / wide-event fields as a short list. -->
+
+**How we know it broke:** <!-- the query or signal a responder would use, in one line -->
 
 ## Risk & rollback
 - Door: <!-- one-way / two-way, and why -->
@@ -284,7 +302,7 @@ Edge cases & intentional best-effort behaviour:
 <!-- What was deliberately left out, why it's safe to ship without it, linked ticket. -->
 ````
 
-Keep it lean — delete sections that are genuinely N/A rather than filling them with noise. A repo-level `.github/pull_request_template.md` makes this the default for every PR.
+Keep it lean (§4) — delete sections that are genuinely N/A rather than filling them with noise, and fill each remaining one in a few lines. A repo-level `.github/pull_request_template.md` makes this the default for every PR.
 
 ---
 
@@ -302,6 +320,7 @@ Keep it lean — delete sections that are genuinely N/A rather than filling them
 - **Mutating an existing event's schema**, or a migration that drops an in-use column / lacks a reverse / ships with the code that depends on it.
 - **Drive-by working-tree files** — a local-only SDK pin, scratch docs — that break CI or every teammate's build.
 - **"It passed locally" as the merge gate** for behaviour behind a mocked external boundary. Any red/skipped test, or a build with suppressed warnings.
+- **The description nobody finishes** — 1,500 words that narrate the review rounds, list the edge cases in three sections and name every file the diff already shows. Reviewers skim it and miss the one unconfirmed assumption. Cut to a three-minute read: point first, each fact once, one line per item.
 - **A stale narrative** — a PR story (or committed WIP doc) describing behaviour the HEAD no longer has.
 - **A diagram of the whole system** instead of the change, or one with every branch drawn — the reviewer has to find the change in it. Highlight one step; list the guard arms in a sentence.
 - **The wrong picture for the change** — a sequence diagram for a policy change (the rule hides in a note) or for a multi-step process (no actors, no policies). Use an Example Map for a rule, an Event Storming line for a process.
